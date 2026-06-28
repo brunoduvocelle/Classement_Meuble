@@ -1,230 +1,501 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <title>Alarme ESP32 - Configuration (Simulation)</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur de Classement - Meublé de Tourisme</title>
+    <meta name="description" content="Outil officiel pour calculer les points de classement des meublés de tourisme de 1 à 5 étoiles.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338ca;
+            --success: #10B981;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --bg-color: #f3f4f6;
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #111827;
+                --card-bg: rgba(31, 41, 55, 0.7);
+                --text-main: #f9fafb;
+                --text-muted: #9ca3af;
+                --glass-border: rgba(255, 255, 255, 0.1);
+                --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
-            font-family: Arial, sans-serif;
-            max-width: 850px;
-            margin: auto;
-            padding: 15px;
-            color: #333;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            background-image: radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
+                              radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
         }
 
-        input[type=text],
-        input[type=number],
-        select {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0 10px 0;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
         }
 
-        input[type=submit],
-        button {
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-            margin: 5px 5px 5px 0;
-            transition: background-color 0.3s;
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
         }
 
-        input[type=submit]:hover,
-        button:hover {
-            opacity: 0.9;
-        }
-
-        .arm {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .disarm {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .history {
-            background-color: #f9f9f9;
-            border: 1px solid #ccc;
-            padding: 10px;
-            white-space: pre-wrap;
-            font-family: monospace;
-            font-size: 0.9em;
-            border-radius: 4px;
-        }
-
-        .status-bar {
-            padding: 15px;
-            border-radius: 4px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            font-size: 1.1em;
+        header {
+            grid-column: 1 / -1;
             text-align: center;
+            margin-bottom: 2rem;
         }
 
-        .status-armed {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
         }
 
-        .status-disarmed {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .glass-panel {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--glass-shadow);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
+        .chapter-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
         }
 
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-            vertical-align: middle;
-        }
-
-        th {
-            background-color: #f2f2f2;
+        .criterion {
+            background: rgba(128, 128, 128, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s;
         }
         
-        h3 {
-            border-bottom: 2px solid #eee;
-            padding-bottom: 5px;
-            margin-top: 30px;
+        .criterion:hover {
+            transform: translateX(4px);
+            background: rgba(128, 128, 128, 0.1);
         }
+
+        .criterion-info { flex: 1; padding-right: 1rem; }
+        .criterion-id { font-weight: bold; color: var(--primary); margin-right: 0.5rem; }
+        .criterion-text { font-size: 0.95rem; }
+        .criterion-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+        .criterion-controls { display: flex; gap: 0.5rem; }
+
+        .radio-group input[type="radio"] { display: none; }
+        .radio-group label {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 1px solid var(--text-muted);
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+        }
+
+        .radio-group input[type="radio"]:checked + label.lbl-oui {
+            background: var(--success); border-color: var(--success); color: white;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .radio-group input[type="radio"]:checked + label.lbl-non {
+            background: var(--danger); border-color: var(--danger); color: white;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+        }
+
+        .radio-group input[type="radio"]:checked + label.lbl-na {
+            background: var(--warning); border-color: var(--warning); color: white;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+        }
+
+        .results-panel { position: sticky; top: 2rem; height: fit-content; }
+
+        .star-result {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background: rgba(128, 128, 128, 0.05);
+            border-left: 4px solid var(--text-muted);
+        }
+
+        .star-result.eligible { border-left-color: var(--success); background: rgba(16, 185, 129, 0.05); }
+        .star-result.not-eligible { border-left-color: var(--danger); background: rgba(239, 68, 68, 0.05); }
+
+        .star-header {
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: bold; font-size: 1.2rem; margin-bottom: 0.5rem;
+        }
+        .star-icon { color: #FBBF24; }
+        
+        .progress-bar {
+            height: 6px; background: rgba(128,128,128,0.2); border-radius: 3px; margin: 0.5rem 0; overflow: hidden;
+        }
+        .progress-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; }
+
+        .result-details { font-size: 0.85rem; color: var(--text-muted); }
+        .reason-fail { color: var(--danger); font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600; }
     </style>
 </head>
-
 <body>
-    <h2>Alarme 8 Zones ESP32 - V1.0.4.1 (Simulation)</h2>
 
-    <div class='status-bar status-disarmed'>
-        ETAT ACTUEL: DÉSARMÉ | 
-        MODE: SERVEUR WEB | 
-        IP: 192.168.4.1 (Mode AP)
-    </div>
+<div class="container">
+    <header>
+        <h1>Classement Meublé de Tourisme</h1>
+        <p>Outil d'autodiagnostic basé sur l'arrêté du 24 novembre 2021</p>
+    </header>
 
-    <hr>
+    <main class="glass-panel" id="form-container">
+        <!-- Criteria will be injected here by JS -->
+    </main>
 
-    <h3>Basculement de Mode</h3>
-    <form action='/toggle_mode' method='POST'>
-        <input type='text' name='pin' placeholder='PIN Admin' required style='width: 100px; display:inline-block;'>
-        <button type='submit' name='mode' value='tuya' style='background-color:#1c84c6; color:white;'>Passer au Mode TUYA Wi-Fi</button>
-    </form>
-    
-    <hr>
+    <aside class="glass-panel results-panel">
+        <h2>Diagnostic en direct</h2>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Cochez les critères pour voir votre éligibilité de 1 à 5 étoiles.</p>
+        <div id="results-container">
+            <!-- Results injected here -->
+        </div>
+    </aside>
+</div>
 
-    <h3>Controle de l'Alarme (PIN requis: 1234)</h3>
-    <form action='/toggle_state' method='POST'>
-        <input type='text' name='pin' placeholder='Entrez le PIN' required style='width: 150px; display:inline-block;'>
-        <button type='submit' name='action' value='arm' class='arm'>Armer</button>
-        <button type='submit' name='action' value='disarm' class='disarm'>Désarmer</button>
-    </form>
-    
-    <hr>
+<script>
+    const criteriaData = [
+  [0, 'Prérequis', 'Un logement meublé d\'une pièce d\'habitation destiné à accueillir une ou deux personnes doit avoir une surface minimale de 9m² lorsque la cuisine est séparée ou d\'au moins 12m² lorsqu\'il existe un coin cuisine', 0, 'PRQ', 'PRQ', 'PRQ', 'PRQ', 'PRQ'],
+  [1, '1. Equipements et aménagements', 'Surface totale minimum (cuisine et coin cuisine compris) du logement meublé hors salle d\'eau et toilettes', 5, 'X', 'X', 'X', 'X', 'X'],
+  [2, '1. Equipements et aménagements', 'Surface totale majorée', 5, 'O', 'O', 'O', 'O', 'O'],
+  [3, '1. Equipements et aménagements', 'Prise de courant libre dans chaque pièce d\'habitation', 1, 'X', 'X', 'X', 'X', 'X'],
+  [4, '1. Equipements et aménagements', 'Tous les éclairages du logement fonctionnent et sont en bon état', 3, 'X', 'X', 'X', 'X', 'X'],
+  [5, '1. Equipements et aménagements', 'Mise à disposition d\'un téléphone privatif à l\'intérieur du logement', 1, 'O', 'O', 'O', 'O', 'O'],
+  [6, '1. Equipements et aménagements', 'Accès internet par un réseau local sans fil (WiFi)', 2, 'O', 'X', 'X', 'X', 'X'],
+  [7, '1. Equipements et aménagements', 'Accès internet filaire avec câble fourni', 2, 'O', 'O', 'O', 'O', 'O'],
+  [8, '1. Equipements et aménagements', 'Télévision à écran plat avec télécommande', 2, 'O', 'X', 'X', 'X', 'X'],
+  [9, '1. Equipements et aménagements', 'Accès à des chaînes supplémentaires à l\'offre de la TNT', 2, 'O', 'O', 'O', 'X', 'X'],
+  [10, '1. Equipements et aménagements', 'Possibilité d\'accéder à au moins deux chaînes internationales', 1, 'O', 'O', 'O', 'O', 'X'],
+  [11, '1. Equipements et aménagements', 'Radio', 2, 'O', 'O', 'X', 'X', 'X'],
+  [12, '1. Equipements et aménagements', 'Enceinte connectée', 1, 'O', 'O', 'O', 'O', 'X'],
+  [13, '1. Equipements et aménagements', 'Mise à disposition d\'un système de lecture de vidéos', 2, 'O', 'O', 'O', 'O', 'X'],
+  [14, '1. Equipements et aménagements', 'Occultation opaque : extérieure ou intérieure dans chaque pièce', 3, 'X', 'X', 'X', 'X', 'X'],
+  [15, '1. Equipements et aménagements', 'Le logement est équipé de double vitrage', 3, 'O', 'O', 'O', 'X', 'X'],
+  [16, '1. Equipements et aménagements', 'Existence d\'un système de chauffage en état de fonctionnement', 5, 'X', 'X', 'X', 'X', 'X'],
+  [17, '1. Equipements et aménagements', 'Existence d\'un système de climatisation et/ou rafraîchissement d\'air', 3, 'O', 'O', 'O', 'O', 'X'],
+  [18, '1. Equipements et aménagements', 'Machine à laver le linge pour les logements de 4 personnes et plus', 3, 'O', 'O', 'X', 'X', 'X'],
+  [19, '1. Equipements et aménagements', 'Séche-linge électrique pour les logements de 6 personnes et plus', 2, 'O', 'O', 'O', 'X', 'X'],
+  [20, '1. Equipements et aménagements', 'Etendoir ou séchoir à linge à l\'intérieur du logement', 2, 'X', 'X', 'X', 'X', 'X'],
+  [21, '1. Equipements et aménagements', 'Ustensiles de ménage appropriés au logement', 3, 'X', 'X', 'X', 'X', 'X'],
+  [22, '1. Equipements et aménagements', 'Fer et table à repasser', 2, 'O', 'O', 'X', 'X', 'X'],
+  [23, '1. Equipements et aménagements', 'Placards ou éléments de rangement dans le logement', 3, 'X', 'X', 'NA', 'NA', 'NA'],
+  [24, '1. Equipements et aménagements', 'Placards ou éléments de rangement dans chaque pièce d\'habitation', 3, 'O', 'O', 'X', 'X', 'X'],
+  [25, '1. Equipements et aménagements', 'Présence d\'une table et d\'assises correspondant à la capacité d\'accueil', 4, 'X', 'X', 'X', 'X', 'X'],
+  [26, '1. Equipements et aménagements', 'Présence d\'un canapé ou fauteuil(s) adapté(s)', 3, 'X', 'X', 'X', 'X', 'X'],
+  [27, '1. Equipements et aménagements', 'Présence d\'une table basse', 1, 'X', 'X', 'X', 'X', 'X'],
+  [28, '1. Equipements et aménagements', 'Respect des dimensions du (ou des) lit(s)', 4, 'X', 'X', 'X', 'X', 'X'],
+  [29, '1. Equipements et aménagements', 'Matelas haute densité et / ou avec une épaisseur de qualité', 2, 'O', 'O', 'O', 'O', 'O'],
+  [30, '1. Equipements et aménagements', 'Présence d\'oreiller(s) en quantité suffisante', 2, 'X', 'X', 'X', 'X', 'X'],
+  [31, '1. Equipements et aménagements', 'Deux couvertures ou une couette par lit', 2, 'X', 'X', 'X', 'X', 'X'],
+  [32, '1. Equipements et aménagements', 'Matelas et oreillers protégés par des alaises ou des housses amovibles', 2, 'X', 'X', 'X', 'X', 'X'],
+  [33, '1. Equipements et aménagements', 'Eclairage en-tête de lit par personne avec interrupteur individuel', 2, 'X', 'X', 'X', 'X', 'X'],
+  [34, '1. Equipements et aménagements', 'Interrupteur ou système de commande de l\'éclairage central près du lit', 2, 'O', 'O', 'O', 'X', 'X'],
+  [35, '1. Equipements et aménagements', 'Présence d\'une prise de courant libre située près du lit', 1, 'O', 'O', 'O', 'O', 'O'],
+  [36, '1. Equipements et aménagements', 'Présence d\'une table de chevet par personne', 2, 'O', 'O', 'X', 'X', 'X'],
+  [37, '1. Equipements et aménagements', 'Une salle d\'eau privative dans un espace clos et aéré intérieur', 2, 'X', 'X', 'X', 'X', 'X'],
+  [38, '1. Equipements et aménagements', 'Une salle d\'eau privative avec accès indépendant', 3, 'X', 'X', 'X', 'X', 'X'],
+  [39, '1. Equipements et aménagements', 'Présence d\'une salle d\'eau équipée (lavabo, douche/baignoire)', 3, 'X', 'X', 'X', 'NA', 'NA'],
+  [40, '1. Equipements et aménagements', 'Présence d\'une salle d\'eau équipée (grandes dimensions)', 2, 'O', 'O', 'O', 'X', 'X'],
+  [41, '1. Equipements et aménagements', 'Un WC privatif intérieur au logement', 2, 'X', 'X', 'X', 'X', 'NA'],
+  [42, '1. Equipements et aménagements', 'Un WC privatif intérieur indépendant de la salle d\'eau', 2, 'O', 'O', 'O', 'O', 'X'],
+  [43, '1. Equipements et aménagements', 'Une deuxième salle d\'eau privative', 5, 'X', 'X', 'X', 'X', 'X'],
+  [44, '1. Equipements et aménagements', 'Présence d\'une salle d\'eau ainsi équipée (2ème)', 3, 'X', 'X', 'X', 'X', 'X'],
+  [45, '1. Equipements et aménagements', 'Un WC privatif (2ème)', 2, 'X', 'X', 'X', 'X', 'X'],
+  [46, '1. Equipements et aménagements', 'Deux points lumineux dont un sur le lavabo', 2, 'O', 'O', 'X', 'X', 'X'],
+  [47, '1. Equipements et aménagements', 'Présence de produits d\'accueil', 3, 'O', 'O', 'X', 'X', 'X'],
+  [48, '1. Equipements et aménagements', 'Une prise de courant libre à proximité du miroir', 2, 'O', 'X', 'X', 'X', 'X'],
+  [49, '1. Equipements et aménagements', 'Patère(s) ou porte-serviettes', 1, 'X', 'X', 'X', 'X', 'X'],
+  [50, '1. Equipements et aménagements', 'Sèche-serviettes électrique', 2, 'O', 'O', 'O', 'O', 'X'],
+  [51, '1. Equipements et aménagements', 'Miroir de salle de bain', 2, 'X', 'X', 'X', 'X', 'X'],
+  [52, '1. Equipements et aménagements', 'Miroir en pied', 2, 'O', 'O', 'O', 'X', 'X'],
+  [53, '1. Equipements et aménagements', 'Tablette sous miroir, plan vasque ou étagère proche du miroir', 2, 'X', 'X', 'X', 'X', 'X'],
+  [54, '1. Equipements et aménagements', 'Espace(s) de rangement supplémentaire(s)', 2, 'O', 'O', 'X', 'X', 'X'],
+  [55, '1. Equipements et aménagements', 'Sèche-cheveux électrique en nombre suffisant', 1, 'O', 'O', 'X', 'X', 'X'],
+  [56, '1. Equipements et aménagements', 'Evier avec robinet mélangeur ou mitigeur', 3, 'X', 'X', 'X', 'X', 'X'],
+  [57, '1. Equipements et aménagements', 'Nombre de foyers respectés (cuisson)', 3, 'X', 'X', 'X', 'X', 'X'],
+  [58, '1. Equipements et aménagements', 'Plaque vitrocéramique, à induction ou à gaz', 2, 'O', 'O', 'O', 'O', 'O'],
+  [59, '1. Equipements et aménagements', 'Four ou mini-four', 3, 'X', 'X', 'X', 'X', 'X'],
+  [60, '1. Equipements et aménagements', 'Four à micro-ondes', 2, 'O', 'X', 'X', 'X', 'X'],
+  [61, '1. Equipements et aménagements', 'Ventilation ou ventilation mécanique contrôlée', 4, 'X', 'X', 'X', 'X', 'X'],
+  [62, '1. Equipements et aménagements', 'Hotte aspirante', 2, 'O', 'O', 'O', 'O', 'O'],
+  [63, '1. Equipements et aménagements', 'Quantité de vaisselle de table non dépareillée minimum par personne', 3, 'X', 'X', 'X', 'X', 'X'],
+  [64, '1. Equipements et aménagements', 'Vaisselle supplémentaire : 1 coupe à champagne, 1 verre à apéritif par personne', 1, 'O', 'O', 'O', 'X', 'X'],
+  [65, '1. Equipements et aménagements', 'Equipement minimum pour la préparation des repas', 3, 'X', 'X', 'X', 'X', 'X'],
+  [66, '1. Equipements et aménagements', 'Au moins deux équipements de petit-électroménager', 2, 'O', 'X', 'X', 'X', 'X'],
+  [67, '1. Equipements et aménagements', 'Autocuiseur ou cuit-vapeur ou robot de cuisine multifonctions', 3, 'O', 'O', 'O', 'O', 'O'],
+  [68, '1. Equipements et aménagements', 'Cafetière', 2, 'X', 'X', 'X', 'X', 'X'],
+  [69, '1. Equipements et aménagements', 'Machine à expresso', 2, 'O', 'O', 'O', 'X', 'X'],
+  [70, '1. Equipements et aménagements', 'Bouilloire', 1, 'O', 'X', 'X', 'X', 'X'],
+  [71, '1. Equipements et aménagements', 'Grille-pain', 1, 'O', 'X', 'X', 'X', 'X'],
+  [72, '1. Equipements et aménagements', 'Lave-vaisselle pour les logements à partir de 2 personnes', 2, 'O', 'O', 'O', 'X', 'X'],
+  [73, '1. Equipements et aménagements', 'Lave-vaisselle de 6 couverts ou plus pour les logements à partir de 4 personnes', 2, 'O', 'O', 'X', 'X', 'X'],
+  [74, '1. Equipements et aménagements', 'Réfrigérateur avec compartiment conservateur', 4, 'X', 'X', 'X', 'X', 'X'],
+  [75, '1. Equipements et aménagements', 'Présence d\'un congélateur ou compartiment congélateur', 2, 'O', 'O', 'X', 'X', 'X'],
+  [76, '1. Equipements et aménagements', 'Poubelle fermée avec couvercle', 1, 'X', 'X', 'X', 'X', 'X'],
+  [77, '1. Equipements et aménagements', 'Ascenseur : Pour accéder au 4ème étage à partir du rez-de-chaussée', 4, 'X', 'X', 'NA', 'NA', 'NA'],
+  [78, '1. Equipements et aménagements', 'Ascenseur : Pour accéder au 3ème étage à partir du rez-de-chaussée', 4, 'O', 'O', 'X', 'X', 'X'],
+  [79, '1. Equipements et aménagements', 'Emplacement(s) parking à proximité', 4, 'X', 'X', 'X', 'X', 'X'],
+  [80, '1. Equipements et aménagements', 'Emplacement(s) parking privatif(s)', 3, 'O', 'O', 'X', 'X', 'X'],
+  [81, '1. Equipements et aménagements', 'Garage ou abri couvert privatif', 2, 'O', 'O', 'O', 'O', 'O'],
+  [82, '1. Equipements et aménagements', 'Logement avec balcon, loggia ou veranda', 2, 'O', 'O', 'O', 'O', 'O'],
+  [83, '1. Equipements et aménagements', 'Logement avec terrasse ou jardin privé', 3, 'O', 'O', 'O', 'O', 'O'],
+  [84, '1. Equipements et aménagements', 'Logement avec parc ou jardin', 4, 'O', 'O', 'O', 'O', 'O'],
+  [85, '1. Equipements et aménagements', 'Présence de mobilier de jardin privatif propre et en bon état', 2, 'O', 'O', 'O', 'O', 'O'],
+  [86, '1. Equipements et aménagements', 'Mise à disposition d’une plancha extérieure et/ou d’un barbecue', 2, 'O', 'O', 'O', 'O', 'O'],
+  [87, '1. Equipements et aménagements', 'Un équipement léger de loisirs, détente ou sport, dédié au logement', 2, 'O', 'O', 'O', 'X', 'X'],
+  [88, '1. Equipements et aménagements', 'Un équipement aménagé de loisirs, détente ou sport', 2, 'O', 'O', 'O', 'O', 'O'],
+  [89, '1. Equipements et aménagements', 'Piscine extérieure ou intérieure', 2, 'O', 'O', 'O', 'O', 'O'],
+  [90, '1. Equipements et aménagements', 'Piscine extérieure ou intérieure chauffée', 2, 'O', 'O', 'O', 'O', 'O'],
+  [91, '1. Equipements et aménagements', 'Existence de rangement(s) pour équipement sportif', 1, 'O', 'O', 'O', 'O', 'O'],
+  [92, '1. Equipements et aménagements', 'Logement avec vue paysagère', 2, 'O', 'O', 'O', 'O', 'O'],
+  [93, '1. Equipements et aménagements', 'Logement avec accès immédiat à un environnement d\'activités', 3, 'O', 'O', 'O', 'O', 'O'],
+  [94, '1. Equipements et aménagements', 'Logement avec accès immédiat aux commerces, services et transports', 3, 'O', 'O', 'O', 'O', 'O'],
+  [95, '1. Equipements et aménagements', 'Les sanitaires sont propres et en bon état', 5, 'X ONC', 'X ONC', 'X ONC', 'X ONC', 'X ONC'],
+  [96, '1. Equipements et aménagements', 'Les sols murs et plafonds sont propres et en bon état', 5, 'X ONC', 'X ONC', 'X ONC', 'X ONC', 'X ONC'],
+  [97, '1. Equipements et aménagements', 'Le mobilier est propre et en bon état', 5, 'X ONC', 'X ONC', 'X ONC', 'X ONC', 'X ONC'],
+  [98, '1. Equipements et aménagements', 'La literie est propre et en bon état', 5, 'X ONC', 'X ONC', 'X ONC', 'X ONC', 'X ONC'],
+  [99, '1. Equipements et aménagements', 'La cuisine ou coin cuisine et les équipements sont propres', 5, 'X ONC', 'X ONC', 'X ONC', 'X ONC', 'X ONC'],
+  [100, '2. Services aux clients', 'Mise à disposition de brochures d\'informations locales et touristiques', 3, 'X', 'X', 'X', 'X', 'X'],
+  [101, '2. Services aux clients', 'Mise à disposition d\'un livret d\'accueil', 2, 'O', 'O', 'X', 'X', 'X'],
+  [102, '2. Services aux clients', 'Accueil sur place par le propriétaire ou son représentant', 3, 'O', 'X', 'X', 'X', 'X'],
+  [103, '2. Services aux clients', 'Cadeau de bienvenue à l\'arrivée du client', 2, 'O', 'O', 'O', 'X', 'X'],
+  [104, '2. Services aux clients', 'Existence d\'une boite à clé ou système équivalent', 2, 'O', 'O', 'O', 'O', 'O'],
+  [105, '2. Services aux clients', 'Draps de lit proposés systématiquement par le loueur', 2, 'X', 'X', 'X', 'X', 'X'],
+  [106, '2. Services aux clients', 'Linge de toilette proposé systématiquement par le loueur', 2, 'X', 'X', 'X', 'X', 'X'],
+  [107, '2. Services aux clients', 'Linge de table', 2, 'O', 'O', 'X', 'X', 'X'],
+  [108, '2. Services aux clients', 'Lits faits à l\'arrivée proposés sytématiquement', 2, 'O', 'O', 'O', 'X', 'X'],
+  [109, '2. Services aux clients', 'Matériel pour bébé à la demande', 2, 'O', 'O', 'X', 'X', 'X'],
+  [110, '2. Services aux clients', 'Service de ménage proposé systématiquement', 2, 'O', 'X', 'X', 'X', 'X'],
+  [111, '2. Services aux clients', 'Présence de produits d\'entretien', 2, 'X', 'X', 'X', 'X', 'X'],
+  [112, '2. Services aux clients', 'Adaptateurs électriques', 2, 'O', 'O', 'O', 'X', 'X'],
+  [113, '2. Services aux clients', 'Existence d\'un site internet ou d\'une page internet dédiée', 2, 'O', 'O', 'O', 'X', 'X'],
+  [114, '2. Services aux clients', 'Existence d\'un site internet ou page internet en langue étrangère', 1, 'O', 'O', 'O', 'X', 'X'],
+  [115, '2. Services aux clients', 'Animaux de compagnie admis', 2, 'O', 'O', 'O', 'O', 'O'],
+  [116, '3. Accessibilité et développement durable', 'Informations concernant l\'accessibilité sur les supports d\'information', 2, 'X', 'X', 'X', 'X', 'X'],
+  [117, '3. Accessibilité et développement durable', 'Mise à disposition de télécommande à grosses touches et de couleurs contrastées', 2, 'O', 'O', 'O', 'O', 'O'],
+  [118, '3. Accessibilité et développement durable', 'Présence d\'un siège de douche avec barre d\'appui', 2, 'O', 'O', 'O', 'O', 'O'],
+  [119, '3. Accessibilité et développement durable', 'Présence de WC avec barre d\'appui', 2, 'O', 'O', 'O', 'O', 'O'],
+  [120, '3. Accessibilité et développement durable', 'Largeur de toutes les portes adaptées', 2, 'O', 'O', 'O', 'O', 'O'],
+  [121, '3. Accessibilité et développement durable', 'Document accessible mis à disposition', 1, 'X', 'X', 'X', 'X', 'X'],
+  [122, '3. Accessibilité et développement durable', 'Obtention du label Tourisme et Handicap', 3, 'O', 'O', 'O', 'O', 'O'],
+  [123, '3. Accessibilité et développement durable', 'Mise en œuvre d\'une mesure de réduction de consommation d\'énergie', 3, 'X', 'X', 'X', 'X', 'X'],
+  [124, '3. Accessibilité et développement durable', 'Mise en œuvre d\'une mesure de réduction d\'énergie supplémentaire', 1, 'O', 'O', 'O', 'O', 'O'],
+  [125, '3. Accessibilité et développement durable', 'Borne de recharge pour les véhicules électriques', 2, 'O', 'O', 'O', 'O', 'O'],
+  [126, '3. Accessibilité et développement durable', 'Mise en œuvre d\'une mesure de réduction de consommation d\'eau', 3, 'X', 'X', 'X', 'X', 'X'],
+  [127, '3. Accessibilité et développement durable', 'Mise en œuvre d\'une mesure de réduction d\'eau supplémentaire', 1, 'O', 'O', 'O', 'O', 'O'],
+  [128, '3. Accessibilité et développement durable', 'Existence d\'un système de tri des déchets dédié au logement', 1, 'X', 'X', 'X', 'X', 'X'],
+  [129, '3. Accessibilité et développement durable', 'Existence d\'un composteur', 1, 'O', 'O', 'O', 'O', 'O'],
+  [130, '3. Accessibilité et développement durable', 'Sensibilisation des clients sur les actions respect de l\'environnement', 2, 'X', 'X', 'X', 'X', 'X'],
+  [131, '3. Accessibilité et développement durable', 'Présence de produits d\'accueil écologiques dans la salle de bains', 2, 'O', 'O', 'O', 'O', 'O'],
+  [132, '3. Accessibilité et développement durable', 'Mise à disposition d\'au moins deux produits d\'entretien respectueux de l\'environnement', 1, 'X', 'X', 'X', 'X', 'X'],
+  [133, '3. Accessibilité et développement durable', 'Obtention d\'un label environnemental', 3, 'O', 'O', 'O', 'O', 'O']
+    ];
 
-    <h3>Parametres de Temporisation & Zones</h3>
-    <form action='/save' method='POST'>
+    const criteria = criteriaData.map(c => ({
+        id: c[0] === 0 ? 'PRQ1' : c[0],
+        chapter: c[1],
+        text: c[2],
+        points: c[3],
+        s: [c[4], c[5], c[6], c[7], c[8]]
+    }));
 
-        <h4>Temporisation Globale de Déclenchement (Secondes)</h4>
-        <label for='fenetre'>Délai pour passer d'un déclenchement 1 à déclenchement 2 (Secondes)</label>
-        <input type='number' name='fenetre' value='300' required>
-        <label for='duree1'>Durée Sirène 1er Déclenchement</label>
-        <input type='number' name='duree1' value='5' required>
-        <label for='duree2'>Durée Sirène 2ème Déclenchement</label>
-        <input type='number' name='duree2' value='120' required>
-        <br>
+    const selections = {};
 
-        <h4>Configuration des Zones (Z1 à Z8)</h4>
-        <table>
-            <tr>
-                <th>Zone</th>
-                <th>Broche</th>
-                <th>Mode</th>
-                <th>Temporisation (s)</th>
-                <th>Sortie Relais</th>
-            </tr>
-            <tr>
-                <td>Z1</td>
-                <td>GPIO 2</td>
-                <td>
-                    <select name='mode_z1'>
-                        <option value='instant' selected>Instantané</option>
-                        <option value='temporise'>Différé (Tempo)</option>
-                    </select>
-                </td>
-                <td><input type='number' name='tempo_duree_z1' value='0' min='0' required></td>
-                <td>
-                    <select name='relay_z1'>
-                        <option value='1' selected>Sortie 1 (GPIO 4)</option>
-                        <option value='2'>Sortie 2 (GPIO 17)</option>
-                        <option value='3'>Les 2 sorties</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Z8</td>
-                <td>GPIO 19</td>
-                <td>
-                    <select name='mode_z8'>
-                        <option value='instant'>Instantané</option>
-                        <option value='temporise' selected>Différé (Tempo)</option>
-                    </select>
-                </td>
-                <td><input type='number' name='tempo_duree_z8' value='30' min='0' required></td>
-                <td>
-                    <select name='relay_z8'>
-                        <option value='1'>Sortie 1 (GPIO 4)</option>
-                        <option value='2' selected>Sortie 2 (GPIO 17)</option>
-                        <option value='3'>Les 2 sorties</option>
-                    </select>
-                </td>
-            </tr>
-            <tr><td>Z2</td><td>GPIO 13</td><td><select name='mode_z2'><option value='instant' selected>Instantané</option><option value='temporise'>Différé (Tempo)</option></select></td><td><input type='number' name='tempo_duree_z2' value='0' min='0' required></td><td><select name='relay_z2'><option value='1' selected>Sortie 1 (GPIO 4)</option><option value='2'>Sortie 2 (GPIO 17)</option><option value='3'>Les 2 sorties</option></select></td></tr>
-            <tr><td>Z3</td><td>GPIO 14</td><td><select name='mode_z3'><option value='instant' selected>Instantané</option><option value='temporise'>Différé (Tempo)</option></select></td><td><input type='number' name='tempo_duree_z3' value='0' min='0' required></td><td><select name='relay_z3'><option value='1' selected>Sortie 1 (GPIO 4)</option><option value='2'>Sortie 2 (GPIO 17)</option><option value='3'>Les 2 sorties</option></select></td></tr>
-            <tr><td>Z4</td><td>GPIO 15</td><td><select name='mode_z4'><option value='instant' selected>Instantané</option><option value='temporise'>Différé (Tempo)</option></select></td><td><input type='number' name='tempo_duree_z4' value='0' min='0' required></td><td><select name='relay_z4'><option value='1' selected>Sortie 1 (GPIO 4)</option><option value='2'>Sortie 2 (GPIO 17)</option><option value='3'>Les 2 sorties</option></select></td></tr>
-            <tr><td>Z5</td><td>GPIO 16</td><td><select name='mode_z5'><option value='instant' selected>Instantané</option><option value='temporise'>Différé (Tempo)</option></select></td><td><input type='number' name='tempo_duree_z5' value='0' min='0' required></td><td><select name='relay_z5'><option value='1' selected>Sortie 1 (GPIO 4)</option><option value='2'>Sortie 2 (GPIO 17)</option><option value='3'>Les 2 sorties</option></select></td></tr>
-            <tr><td>Z6</td><td>GPIO 25</td><td><select name='mode_z6'><option value='instant' selected>Instantané</option><option value='temporise'>Différé (Tempo)</option></select></td><td><input type='number' name='tempo_duree_z6' value='0' min='0' required></td><td><select name='relay_z6'><option value='1' selected>Sortie 1 (GPIO 4)</option><option value='2'>Sortie 2 (GPIO 17)</option><option value='3'>Les 2 sorties</option></select></td></tr>
-            <tr><td>Z7</td><td>GPIO 18</td><td><select name='mode_z7'><option value='instant' selected>Instantané</option><option value='temporise'>Différé (Tempo)</option></select></td><td><input type='number' name='tempo_duree_z7' value='0' min='0' required></td><td><select name='relay_z7'><option value='1' selected>Sortie 1 (GPIO 4)</option><option value='2'>Sortie 2 (GPIO 17)</option><option value='3'>Les 2 sorties</option></select></td></tr>
-        </table>
-        <br>
+    function init() {
+        const formContainer = document.getElementById('form-container');
+        let currentChapter = '';
 
-        <h3>Configuration Mise a Jour OTA</h3>
-        <label for='ver_url'>URL du fichier de Version (version.txt)</label>
-        <input type='text' name='ver_url' placeholder='http://monserveur.com/version.txt' value='http://mon-serveur-test/version.txt' required>
-        <label for='fw_url'>URL du Firmware (.bin)</label>
-        <input type='text' name='fw_url' placeholder='http://monserveur.com/alarme.bin' value='http://mon-serveur-test/alarme_esp32.bin' required>
+        criteria.forEach(c => {
+            if (c.chapter !== currentChapter) {
+                currentChapter = c.chapter;
+                const chapterEl = document.createElement('h2');
+                chapterEl.className = 'chapter-title';
+                chapterEl.textContent = currentChapter;
+                formContainer.appendChild(chapterEl);
+            }
 
+            const div = document.createElement('div');
+            div.className = 'criterion';
+            
+            let statusesDisplay = '';
+            [1,2,3,4,5].forEach((s, idx) => {
+               if(c.s[idx] && c.s[idx] !== 'NA') {
+                   statusesDisplay += `<span title="Etoile ${s}">${s}*: ${c.s[idx]}</span> `;
+               }
+            });
 
-        <h3>Configuration Wi-Fi Domestique</h3>
-        <label for='newssid'>Nom du reseau (SSID)</label>
-        <input type='text' name='newssid' placeholder='SSID de la box' value='Mon_SSID_Sauvegarde' required>
-        <label for='newpass'>Mot de passe</label>
-        <input type='text' name='newpass' placeholder='Mot de passe du reseau' required>
+            div.innerHTML = `
+                <div class="criterion-info">
+                    <div><span class="criterion-id">#${c.id}</span> <span class="criterion-text">${c.text}</span></div>
+                    <div class="criterion-meta">${c.points} pts | Applicabilité : ${statusesDisplay}</div>
+                </div>
+                <div class="criterion-controls radio-group">
+                    <input type="radio" id="c_${c.id}_oui" name="c_${c.id}" value="oui">
+                    <label class="lbl-oui" for="c_${c.id}_oui">OUI</label>
+                    
+                    <input type="radio" id="c_${c.id}_non" name="c_${c.id}" value="non">
+                    <label class="lbl-non" for="c_${c.id}_non">NON</label>
+                    
+                    <input type="radio" id="c_${c.id}_na" name="c_${c.id}" value="na">
+                    <label class="lbl-na" for="c_${c.id}_na">N/A</label>
+                </div>
+            `;
+            formContainer.appendChild(div);
 
-        <input type='submit' value='Sauvegarder & Redemarrer' style='background-color:#007bff;'>
-    </form>
-    
-    <hr>
+            const radios = div.querySelectorAll('input[type="radio"]');
+            radios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    selections[c.id] = e.target.value;
+                    calculate();
+                });
+            });
+        });
 
-    <h3>Historique des Evénements (5 derniers)</h3>
-    <div class='history'>
-        08:45:12 | OTA: ECHEC (HTTP 404)<br>
-        08:45:00 | SYSTEME DESARME<br>
-        08:44:50 | ALARME ZONE Z8 DECLENCHEE (Relais 2)<br>
-        08:44:00 | SYSTEME ARME<br>
-        08:43:00 | Demarrage en mode Client
-    </div>
+        calculate();
+    }
 
+    function calculate() {
+        const resultsContainer = document.getElementById('results-container');
+        resultsContainer.innerHTML = '';
+        
+        const stars = [1, 2, 3, 4, 5];
+        const optThresholds = [0.05, 0.10, 0.20, 0.30, 0.40];
+
+        stars.forEach(star => {
+            let reqTotal = 0;
+            let reqObtained = 0;
+            let optTotal = 0;
+            let optObtained = 0;
+            let oncFailed = false;
+            let preqFailed = false;
+
+            criteria.forEach(c => {
+                let status = c.s[star - 1]; 
+                let val = selections[c.id]; 
+                let pts = parseInt(c.points) || 0;
+
+                let effectiveVal = val || 'non';
+
+                if (effectiveVal === 'na') {
+                    if (status === 'X ONC') { oncFailed = true; }
+                    return; 
+                }
+
+                if (status === 'PRQ') {
+                    if (effectiveVal !== 'oui') preqFailed = true;
+                } else if (status === 'X' || status === 'X ONC') {
+                    reqTotal += pts;
+                    if (effectiveVal === 'oui') {
+                        reqObtained += pts;
+                    } else if (status === 'X ONC') {
+                        oncFailed = true;
+                    }
+                } else if (status === 'O') {
+                    optTotal += pts;
+                    if (effectiveVal === 'oui') {
+                        optObtained += pts;
+                    }
+                }
+            });
+
+            let isEligible = true;
+            let failReason = [];
+
+            if (preqFailed) {
+                isEligible = false;
+                failReason.push("Le prérequis (surface minimale) n'est pas rempli.");
+            }
+            if (oncFailed) {
+                isEligible = false;
+                failReason.push("Critères obligatoires non compensables (X ONC) manquants ou NA.");
+            }
+
+            let minReqPts = Math.ceil(reqTotal * 0.95);
+            let missingReq = Math.max(0, reqTotal - reqObtained);
+
+            if (reqObtained < minReqPts && reqTotal > 0) {
+                isEligible = false;
+                failReason.push(`Points obligatoires insuffisants (${reqObtained}/${reqTotal}). Vous devez atteindre au moins 95% (${minReqPts} pts).`);
+            }
+
+            let compensationNeeded = missingReq * 3;
+            let remainingOptObtained = optObtained - compensationNeeded;
+
+            if (remainingOptObtained < 0) {
+                isEligible = false;
+                failReason.push(`Points optionnels insuffisants pour compenser le déficit obligatoire (il manque ${missingReq} pts, nécessitant ${compensationNeeded} pts optionnels).`);
+            }
+
+            let reqOpt = Math.ceil(optTotal * optThresholds[star - 1]);
+            if (remainingOptObtained < reqOpt) {
+                isEligible = false;
+                failReason.push(`Points optionnels insuffisants (${Math.max(0, remainingOptObtained)} / ${reqOpt} requis après compensation).`);
+            }
+
+            const resDiv = document.createElement('div');
+            resDiv.className = `star-result ${isEligible ? 'eligible' : 'not-eligible'}`;
+            
+            let starsHtml = '';
+            for(let i=0; i<star; i++) starsHtml += '★';
+
+            let progressPct = reqTotal > 0 ? Math.min(100, (reqObtained / reqTotal) * 100) : 100;
+
+            resDiv.innerHTML = `
+                <div class="star-header">
+                    <span>${star} Étoile${star > 1 ? 's' : ''}</span>
+                    <span class="star-icon">${starsHtml}</span>
+                </div>
+                <div class="result-details">
+                    <div>Obligatoires : ${reqObtained} / ${reqTotal} (Min 95%: ${minReqPts})</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: ${progressPct}%"></div></div>
+                    <div>Optionnels : ${optObtained} / ${optTotal}</div>
+                    ${compensationNeeded > 0 ? `<div><em>Compensation appliquée : -${compensationNeeded} pts optionnels</em></div>` : ''}
+                    <div>Optionnels Requis (après comp.) : ${Math.max(0, remainingOptObtained)} / ${reqOpt} (Min ${optThresholds[star-1]*100}%)</div>
+                </div>
+                ${!isEligible ? `<div class="reason-fail">${failReason.join('<br>')}</div>` : '<div style="color: var(--success); font-weight: bold; margin-top: 0.5rem;">Éligible ! ✓</div>'}
+            `;
+            resultsContainer.appendChild(resDiv);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+</script>
 </body>
 </html>
