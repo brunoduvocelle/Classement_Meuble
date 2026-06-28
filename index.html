@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Alarme ESP32 - Configuration (Simulation)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 850px;
+            margin: auto;
+            padding: 15px;
+            color: #333;
+        }
+
+        input[type=text],
+        input[type=number],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type=submit],
+        button {
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 5px 5px 5px 0;
+            transition: background-color 0.3s;
+        }
+
+        input[type=submit]:hover,
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .arm {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .disarm {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .history {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 0.9em;
+            border-radius: 4px;
+        }
+
+        .status-bar {
+            padding: 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        .status-armed {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-disarmed {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        h3 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Alarme 8 Zones ESP32 - V1.0.4.1 (Simulation)</h2>
+
+    <div class='status-bar status-disarmed'>
+        ETAT ACTUEL: DÉSARMÉ | 
+        MODE: SERVEUR WEB | 
+        IP: 192.168.4.1 (Mode AP)
+    </div>
+
+    <hr>
+
+    <h3>Basculement de Mode</h3>
+    <form action='/toggle_mode' method='POST'>
+        <input type='text' name='pin' placeholder='PIN Admin' required style='width: 100px; display:inline-block;'>
+        <button type='submit' name='mode' value='tuya' style='background-color:#1c84c6; color:white;'>Passer au Mode TUYA Wi-Fi</button>
+    </form>
+    
+    <hr>
+
+    <h3>Controle de l'Alarme (PIN requis: 1234)</h3>
+    <form action='/toggle_state' method='POST'>
+        <input type='text' name='pin' placeholder='Entrez le PIN' required style='width: 150px; display:inline-block;'>
+        <button type='submit' name='action' value='arm' class='arm'>Armer</button>
+        <button type='submit' name='action' value='disarm' class='disarm'>Désarmer</button>
+    </form>
+    
+    <hr>
+
+    <h3>Parametres de Temporisation & Zones</h3>
+    <form action='/save' method='POST'>
+
+        <h4>Temporisation Globale de Déclenchement (Secondes)</h4>
+        <label for='fenetre'>Délai pour passer d'un déclenchement 1 à déclenchement 2 (Secondes)</label>
+        <input type='number' name='fenetre' value='300' required>
+        <label for='duree1'>Durée Sirène 1er Déclenchement</label>
+        <input type='number' name='duree1' value='5' required>
+        <label for='duree2'>Durée Sirène 2ème Déclenchement</label>
+        <input type='number' name='duree2' value='120' required>
+        <br>
+
+        <h4>Configuration des Zones (Z1 à Z8)</h4>
+        <table>
+            <tr>
+                <th>Zone</th>
+                <th>Broche</th>
+                <th>Mode</th>
+                <th>Temporisation (s)</th>
+                <th>Sortie Relais</th>
+            </tr>
+            <tr>
+                <td>Z1</td>
+                <td>GPIO 2</td>
+                <td>
+                    <select name='mode_z1'>
+                        <option value='instant' selected>Instantané</option>
+                        <option value='temporise'>Différé (Tempo)</option>
+                    </select>
+                </td>
+                <td><input type='number' name='tempo_duree_z1' value='0' min='0' required></td>
+                <td>
+                    <select name='relay_z1'>
+                        <option value='1' selected>Sortie 1 (GPIO 4)</option>
+                        <option value='2'>Sortie 2 (GPIO 17)</option>
+                        <option value='3'>Les 2 sorties</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Z8</td>
+                <td>GPIO 19</td>
+                <td>
+                    <select name='mode_z8'>
+                        <option value='instant'>Instantané</option>
+                        <option value='temporise' selected>Différé (Tempo)</option>
+                    </select>
+                </td>
+                <td><input type='number' name='tempo_duree_z8' value='30' min='0' required></td>
+                <td>
+                    <select name='relay_z8'>
+                        <option value='1'>Sortie 1 (GPIO 4)</option>
+                        <option value='2' selected>Sortie 2 (GPIO 17)</option>
+                        <option value='3'>Les 2 sorties</option>
+                    </select>
+                </td>
+            </tr>
+            <tr><td>Z2</td><td>GPIO 13</td><td><select name='mode_z2'><option value='instant' selected>Instantané</option><option value='temporise'>Différé (Tempo)</option></select></td><td><input type='number' name='tempo_duree_z2' value='0' min='0' required></td><td><select name='relay_z2'><option value='1' selected>Sortie 1 (GPIO 4)</option><option value='2'>Sortie 2 (GPIO 17)</option><option value='3'>Les 2 sorties</option></select></td></tr>
+            <tr><td>Z3</td><td>GPIO 14</td><td><select name='mode_z3'><option value='instant' selected>Instantané</option><option value='temporise'>Différé (Tempo)</option></select></td><td><input type='number' name='tempo_duree_z3' value='0' min='0' required></td><td><select name='relay_z3'><option value='1' selected>Sortie 1 (GPIO 4)</option><option value='2'>Sortie 2 (GPIO 17)</option><option value='3'>Les 2 sorties</option></select></td></tr>
+            <tr><td>Z4</td><td>GPIO 15</td><td><select name='mode_z4'><option value='instant' selected>Instantané</option><option value='temporise'>Différé (Tempo)</option></select></td><td><input type='number' name='tempo_duree_z4' value='0' min='0' required></td><td><select name='relay_z4'><option value='1' selected>Sortie 1 (GPIO 4)</option><option value='2'>Sortie 2 (GPIO 17)</option><option value='3'>Les 2 sorties</option></select></td></tr>
+            <tr><td>Z5</td><td>GPIO 16</td><td><select name='mode_z5'><option value='instant' selected>Instantané</option><option value='temporise'>Différé (Tempo)</option></select></td><td><input type='number' name='tempo_duree_z5' value='0' min='0' required></td><td><select name='relay_z5'><option value='1' selected>Sortie 1 (GPIO 4)</option><option value='2'>Sortie 2 (GPIO 17)</option><option value='3'>Les 2 sorties</option></select></td></tr>
+            <tr><td>Z6</td><td>GPIO 25</td><td><select name='mode_z6'><option value='instant' selected>Instantané</option><option value='temporise'>Différé (Tempo)</option></select></td><td><input type='number' name='tempo_duree_z6' value='0' min='0' required></td><td><select name='relay_z6'><option value='1' selected>Sortie 1 (GPIO 4)</option><option value='2'>Sortie 2 (GPIO 17)</option><option value='3'>Les 2 sorties</option></select></td></tr>
+            <tr><td>Z7</td><td>GPIO 18</td><td><select name='mode_z7'><option value='instant' selected>Instantané</option><option value='temporise'>Différé (Tempo)</option></select></td><td><input type='number' name='tempo_duree_z7' value='0' min='0' required></td><td><select name='relay_z7'><option value='1' selected>Sortie 1 (GPIO 4)</option><option value='2'>Sortie 2 (GPIO 17)</option><option value='3'>Les 2 sorties</option></select></td></tr>
+        </table>
+        <br>
+
+        <h3>Configuration Mise a Jour OTA</h3>
+        <label for='ver_url'>URL du fichier de Version (version.txt)</label>
+        <input type='text' name='ver_url' placeholder='http://monserveur.com/version.txt' value='http://mon-serveur-test/version.txt' required>
+        <label for='fw_url'>URL du Firmware (.bin)</label>
+        <input type='text' name='fw_url' placeholder='http://monserveur.com/alarme.bin' value='http://mon-serveur-test/alarme_esp32.bin' required>
+
+
+        <h3>Configuration Wi-Fi Domestique</h3>
+        <label for='newssid'>Nom du reseau (SSID)</label>
+        <input type='text' name='newssid' placeholder='SSID de la box' value='Mon_SSID_Sauvegarde' required>
+        <label for='newpass'>Mot de passe</label>
+        <input type='text' name='newpass' placeholder='Mot de passe du reseau' required>
+
+        <input type='submit' value='Sauvegarder & Redemarrer' style='background-color:#007bff;'>
+    </form>
+    
+    <hr>
+
+    <h3>Historique des Evénements (5 derniers)</h3>
+    <div class='history'>
+        08:45:12 | OTA: ECHEC (HTTP 404)<br>
+        08:45:00 | SYSTEME DESARME<br>
+        08:44:50 | ALARME ZONE Z8 DECLENCHEE (Relais 2)<br>
+        08:44:00 | SYSTEME ARME<br>
+        08:43:00 | Demarrage en mode Client
+    </div>
+
+</body>
+</html>
