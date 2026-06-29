@@ -233,11 +233,16 @@
       font-size: clamp(38px, 9vw, 84px); 
       font-weight: 800;
       line-height: 1.1;
-      background: linear-gradient(135deg, #4C1D95 0%, #7C3AED 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      color: transparent;
+      /* DÉBUT DE LA MODIFICATION SELON LES SPÉCIFICATIONS DE L'ARCHITECTE */
+      background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://c8.alamy.com/compfr/c65725/un-mur-de-pierre-blanche-dans-un-village-de-provence-c65725.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+      /* FIN DE LA MODIFICATION */
+      -webkit-background-clip: text; /* Propriété existante à conserver */
+      -webkit-text-fill-color: transparent; /* Propriété existante à conserver */
+      background-clip: text; /* Propriété existante à conserver */
+      color: transparent; /* Propriété existante à conserver */
       padding-bottom: 4px;
       margin-left: -2px; 
       /* Cette propriété est vitale : elle coupe le mot s'il est trop long pour l'écran */
@@ -890,6 +895,11 @@
 </footer>
 
 <script>
+  /**
+   * Tableau des URLs des photos de la galerie.
+   * Ces images sont utilisées à la fois pour le carrousel principal et les miniatures.
+   * @type {string[]}
+   */
   const photos = [
     "https://a0.muscache.com/im/pictures/hosting/Hosting-1313574872188854127/original/f9a59360-6463-48bc-9561-b2c1d1ba44b2.jpeg?im_w=1200",
     "https://a0.muscache.com/im/pictures/hosting/Hosting-1313574872188854127/original/630322bb-d6c9-4717-96bb-ef5d29431743.jpeg?im_w=720",
@@ -900,42 +910,54 @@
     "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTMxMzU3NDg3MjE4ODg1NDEyNw%3D%3D/original/3a9863c4-9113-4626-84d0-52b289597a41.jpeg?im_w=480"
   ];
 
-  let index = 0;
-  const thumbsWrap = document.getElementById("thumbs");
-  const prevBtn = document.getElementById("prevBtn");
-  const nextBtn = document.getElementById("nextBtn");
-  const galleryStage = document.querySelector(".gallery-stage");
+  let index = 0; // Index de la photo actuellement affichée
+  const thumbsWrap = document.getElementById("thumbs"); // Conteneur des miniatures
+  const prevBtn = document.getElementById("prevBtn"); // Bouton précédent
+  const nextBtn = document.getElementById("nextBtn"); // Bouton suivant
+  const galleryStage = document.querySelector(".gallery-stage"); // Zone d'affichage de la photo principale
   
-  const stageImgs = [];
+  const stageImgs = []; // Tableau pour stocker les éléments img du carrousel principal
 
-  // Initialize Gallery
+  /**
+   * Initialise la galerie photo en créant les images du carrousel principal
+   * et les miniatures correspondantes.
+   */
   photos.forEach((src, i) => {
-    // Images principales
+    // Crée et ajoute l'image principale au carrousel
     const img = document.createElement("img");
     img.src = src;
     img.alt = `Photo La Villa Baumas ${i+1}`;
-    if(i === 0) img.classList.add("active");
-    // Insérer avant les contrôles
+    if(i === 0) img.classList.add("active"); // Active la première image par défaut
+    // Insérer l'image avant les contrôles de navigation
     galleryStage.insertBefore(img, galleryStage.querySelector('.gallery-controls'));
-    stageImgs.push(img);
+    stageImgs.push(img); // Ajoute l'image au tableau des images du carrousel
 
-    // Miniatures
+    // Crée et ajoute la miniature à la zone des miniatures
     const t = document.createElement("img");
     t.src = src;
     t.alt = `Miniature ${i+1}`;
-    t.className = "thumb" + (i === 0 ? " active" : "");
+    t.className = "thumb" + (i === 0 ? " active" : ""); // Active la première miniature par défaut
+    // Définit l'action au clic sur une miniature
     t.addEventListener("click", () => setIndex(i));
     thumbsWrap.appendChild(t);
   });
 
+  /**
+   * Met à jour l'image affichée dans le carrousel et l'état des miniatures.
+   * @param {number} i Le nouvel index de la photo à afficher.
+   */
   function setIndex(i) {
+    // Calcule le nouvel index en s'assurant qu'il reste dans les limites du tableau
     index = (i + photos.length) % photos.length;
+
+    // Met à jour la classe 'active' pour l'image principale
     stageImgs.forEach((img, k) => img.classList.toggle("active", k === index));
     
+    // Met à jour la classe 'active' pour les miniatures
     const thumbsList = [...thumbsWrap.querySelectorAll(".thumb")];
     thumbsList.forEach((t, k) => t.classList.toggle("active", k === index));
     
-    // Auto-scroll pour les miniatures sur mobile
+    // Fait défiler les miniatures pour que la miniature active soit visible
     const activeThumb = thumbsList[index];
     if(activeThumb) {
       const scrollLeft = activeThumb.offsetLeft - (thumbsWrap.clientWidth / 2) + (activeThumb.clientWidth / 2);
@@ -943,44 +965,58 @@
     }
   }
 
+  /**
+   * Affiche la photo suivante dans le carrousel.
+   */
   function next() { setIndex(index + 1); }
+
+  /**
+   * Affiche la photo précédente dans le carrousel.
+   */
   function prev() { setIndex(index - 1); }
 
+  // Attache les écouteurs d'événements aux boutons de navigation
   prevBtn.addEventListener("click", prev);
   nextBtn.addEventListener("click", next);
 
-  // Auto-play
-  let timer = setInterval(next, 5000);
-  galleryStage.addEventListener("mouseenter", () => clearInterval(timer));
-  galleryStage.addEventListener("mouseleave", () => { timer = setInterval(next, 5000); });
-  
-  // Support du balayage (swipe) tactile sur mobile
-  let touchStartX = 0;
-  let touchEndX = 0;
+  // Configuration de l'auto-lecture du carrousel
+  let timer = setInterval(next, 5000); // Change de photo toutes les 5 secondes
+  galleryStage.addEventListener("mouseenter", () => clearInterval(timer)); // Arrête l'auto-lecture au survol
+  galleryStage.addEventListener("mouseleave", () => { timer = setInterval(next, 5000); }); // Reprend l'auto-lecture quand la souris quitte
+
+  // Support du balayage (swipe) tactile sur mobile pour la galerie
+  let touchStartX = 0; // Position X de début du toucher
+  let touchEndX = 0;   // Position X de fin du toucher
   
   galleryStage.addEventListener('touchstart', e => {
     touchStartX = e.changedTouches[0].screenX;
-    clearInterval(timer);
-  }, {passive: true});
-  
+    clearInterval(timer); // Arrête l'auto-lecture pendant le swipe
+  }, {passive: true}); // Utilise {passive: true} pour améliorer les performances de défilement
+
   galleryStage.addEventListener('touchend', e => {
     touchEndX = e.changedTouches[0].screenX;
-    if (touchStartX - touchEndX > 50) next(); // Swipe gauche
-    if (touchEndX - touchStartX > 50) prev(); // Swipe droite
-    timer = setInterval(next, 5000);
-  }, {passive: true});
+    if (touchStartX - touchEndX > 50) next(); // Si le balayage est vers la gauche, passe à la photo suivante
+    if (touchEndX - touchStartX > 50) prev(); // Si le balayage est vers la droite, passe à la photo précédente
+    timer = setInterval(next, 5000); // Reprend l'auto-lecture après le swipe
+  }, {passive: true}); // Utilise {passive: true} pour améliorer les performances de défilement
 
-  // Gestion du bouton copier le lien
-  const airbnbLink = "https://www.airbnb.fr/rooms/1313574872188854127";
-  const copyBtn = document.getElementById("copyLinkBtn");
-  const copyResult = document.getElementById("copyResult");
+  // Gestion du bouton "Copier le lien"
+  const airbnbLink = "https://www.airbnb.fr/rooms/1313574872188854127"; // Lien Airbnb à copier
+  const copyBtn = document.getElementById("copyLinkBtn"); // Bouton de copie
+  const copyResult = document.getElementById("copyResult"); // Message de confirmation de copie
 
+  /**
+   * Gère l'événement de clic sur le bouton de copie.
+   * Copie le lien Airbnb dans le presse-papiers et affiche une confirmation.
+   */
   copyBtn.addEventListener("click", async () => {
     try {
+      // Tente de copier le texte dans le presse-papiers via l'API Navigator
       await navigator.clipboard.writeText(airbnbLink);
-      copyResult.classList.add("show");
-      setTimeout(() => copyResult.classList.remove("show"), 2000);
+      copyResult.classList.add("show"); // Affiche le message de succès
+      setTimeout(() => copyResult.classList.remove("show"), 2000); // Cache le message après 2 secondes
     } catch(e) {
+      // Si la copie automatique échoue (ex: permissions refusées), affiche une alerte manuelle
       alert("Copie impossible automatiquement. Copiez manuellement :\n" + airbnbLink);
     }
   });
