@@ -26,6 +26,11 @@
       --shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
       --shadow-hover: 0 25px 50px rgba(0, 0, 0, 0.1);
       --radius: 24px;
+
+      /* Nouvelle variable pour l'image de fond provençale */
+      --stone-bg-image: url('https://benz24.fr/media/webp_image/catalog/product/cache/e21cd952b1c4efa11f944004b4b668c8/t/e/tertus-ton-naturel.webp');
+      --stone-bg-size: 550px auto; /* Taille de la tuile de pierre */
+      --stone-bg-position: center top; /* Position du fond fixe */
     }
 
     * { box-sizing: border-box; }
@@ -43,17 +48,9 @@
       color: var(--text);
       line-height: 1.6;
       
-      /* Intégration du mur de pierre avec son voile de lueur beige pour la lisibilité */
+      /* Fond principal du body, sans image ni ombre de texte (les éléments de contenu gèrent leur propre fond) */
       background-color: var(--bg);
-      background-image: 
-        linear-gradient(rgba(250, 246, 240, 0.84), rgba(250, 246, 240, 0.84)), 
-        url('https://c8.alamy.com/compfr/c65725/un-mur-de-pierre-blanche-dans-un-village-de-provence-c65725.jpg');
-      background-repeat: repeat;
-      background-size: 550px auto;
-      background-attachment: fixed;
-      
-      /* Légère ombre de lisibilité globale */
-      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+      /* Suppression de l'ancienne background-image et text-shadow */
     }
 
     img, svg {
@@ -73,7 +70,9 @@
       top: 0;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      background: rgba(250, 246, 240, 0.85);
+      /* Application de l'image de pierre avec surcouche pour la lisibilité */
+      background: linear-gradient(rgba(250, 246, 240, 0.85), rgba(250, 246, 240, 0.85)), var(--stone-bg-image) var(--stone-bg-position) repeat fixed;
+      background-size: var(--stone-bg-size);
       border-bottom: 1px solid var(--border);
       z-index: 100;
     }
@@ -178,7 +177,9 @@
     }
 
     .card {
-      background: var(--card);
+      /* Application de l'image de pierre avec surcouche pour la lisibilité */
+      background: linear-gradient(var(--card), var(--card)), var(--stone-bg-image) var(--stone-bg-position) repeat fixed;
+      background-size: var(--stone-bg-size);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
@@ -208,7 +209,9 @@
       padding: 6px 12px;
       border-radius: 999px;
       border: 1px solid var(--border);
-      background: rgba(250, 246, 240, 0.8);
+      /* Application de l'image de pierre avec surcouche pour la lisibilité */
+      background: linear-gradient(rgba(250, 246, 240, 0.8), rgba(250, 246, 240, 0.8)), var(--stone-bg-image) var(--stone-bg-position) repeat fixed;
+      background-size: var(--stone-bg-size);
       color: var(--text);
       font-weight: 600;
       font-size: 11px;
@@ -296,7 +299,9 @@
       align-items: center;
       padding: 14px;
       border-radius: 20px;
-      background: rgba(250, 246, 240, 0.6);
+      /* Application de l'image de pierre avec surcouche pour la lisibilité */
+      background: linear-gradient(rgba(250, 246, 240, 0.6), rgba(250, 246, 240, 0.6)), var(--stone-bg-image) var(--stone-bg-position) repeat fixed;
+      background-size: var(--stone-bg-size);
       border: 1px solid var(--border);
       transition: all 0.3s ease;
       backdrop-filter: blur(4px);
@@ -310,7 +315,9 @@
     }
 
     .badge:hover { 
-      background: rgba(255, 255, 255, 0.95);
+      /* Application de l'image de pierre avec surcouche pour la lisibilité */
+      background: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), var(--stone-bg-image) var(--stone-bg-position) repeat fixed;
+      background-size: var(--stone-bg-size);
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(0,0,0,0.03);
     }
@@ -354,7 +361,7 @@
       position: relative;
       width: 100%;
       padding-bottom: 66%; 
-      background: #F3F4F6;
+      background: #F3F4F6; /* Ce fond reste, il est sous les images de la galerie */
       overflow: hidden;
       touch-action: pan-y;
     }
@@ -386,7 +393,7 @@
     .btn {
       pointer-events: auto;
       border: 1px solid rgba(0,0,0,0.05);
-      background: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.9); /* Pas de fond pierre ici, c'est un bouton léger */
       color: var(--text);
       border-radius: 50%;
       width: 40px; height: 40px;
@@ -405,7 +412,7 @@
       display: flex;
       gap: 12px;
       padding: 12px;
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.9); /* Pas de fond pierre ici, c'est pour les miniatures */
       border-top: 1px solid var(--border);
       overflow-x: auto;
       scrollbar-width: none;
@@ -502,7 +509,9 @@
     }
 
     .activity-card {
-      background: var(--card);
+      /* Application de l'image de pierre avec surcouche pour la lisibilité */
+      background: linear-gradient(var(--card), var(--card)), var(--stone-bg-image) var(--stone-bg-position) repeat fixed;
+      background-size: var(--stone-bg-size);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 32px;
@@ -517,7 +526,9 @@
     }
 
     .activity-card:hover {
-      background: var(--card-hover);
+      /* Application de l'image de pierre avec surcouche pour la lisibilité */
+      background: linear-gradient(var(--card-hover), var(--card-hover)), var(--stone-bg-image) var(--stone-bg-position) repeat fixed;
+      background-size: var(--stone-bg-size);
       transform: translateY(-4px);
       box-shadow: var(--shadow-hover);
     }
@@ -536,7 +547,9 @@
     .activity .icon {
       width: 48px; height: 48px;
       border-radius: 16px;
-      background: rgba(250, 246, 240, 0.7);
+      /* Application de l'image de pierre avec surcouche pour la lisibilité */
+      background: linear-gradient(rgba(250, 246, 240, 0.7), rgba(250, 246, 240, 0.7)), var(--stone-bg-image) var(--stone-bg-position) repeat fixed;
+      background-size: var(--stone-bg-size);
       border: 1px solid var(--border);
       display: grid; place-items: center;
       flex-shrink: 0;
@@ -578,7 +591,9 @@
 
     /* --- BANNER LOCATION --- */
     .banner {
-      background: linear-gradient(135deg, rgba(249, 245, 255, 0.85), rgba(255, 241, 242, 0.85));
+      /* Application de l'image de pierre avec surcouche pour la lisibilité */
+      background: linear-gradient(135deg, rgba(249, 245, 255, 0.85), rgba(255, 241, 242, 0.85)), var(--stone-bg-image) var(--stone-bg-position) repeat fixed;
+      background-size: var(--stone-bg-size);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(124, 58, 237, 0.1);
@@ -626,7 +641,9 @@
 
     .btn-outline {
       border: 2px solid #D8B4E2;
-      background: rgba(255, 255, 255, 0.9);
+      /* Application de l'image de pierre avec surcouche pour la lisibilité */
+      background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), var(--stone-bg-image) var(--stone-bg-position) repeat fixed;
+      background-size: var(--stone-bg-size);
       color: #6B46C1;
       border-radius: 16px;
       padding: 16px 24px;
@@ -641,7 +658,12 @@
       width: 100%;
       text-shadow: none;
     }
-    .btn-outline:hover { background: #F3F0FF; border-color: #9D4EDD; }
+    .btn-outline:hover { 
+      /* Application de l'image de pierre avec surcouche pour la lisibilité */
+      background: linear-gradient(#F3F0FF, #F3F0FF), var(--stone-bg-image) var(--stone-bg-position) repeat fixed;
+      background-size: var(--stone-bg-size);
+      border-color: #9D4EDD; 
+    }
 
     .copyResult {
       position: absolute;
@@ -662,7 +684,9 @@
       padding: 40px 20px;
       text-align: center;
       border-top: 1px solid var(--border);
-      background: rgba(244, 244, 245, 0.95);
+      /* Application de l'image de pierre avec surcouche pour la lisibilité */
+      background: linear-gradient(rgba(244, 244, 245, 0.95), rgba(244, 244, 245, 0.95)), var(--stone-bg-image) var(--stone-bg-position) repeat fixed;
+      background-size: var(--stone-bg-size);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       color: var(--muted);
@@ -904,6 +928,9 @@
 </footer>
 
 <script>
+  /**
+   * @type {string[]} Liste des URLs des photos pour la galerie.
+   */
   const photos = [
     "https://a0.muscache.com/im/pictures/hosting/Hosting-1313574872188854127/original/f9a59360-6463-48bc-9561-b2c1d1ba44b2.jpeg?im_w=1200",
     "https://a0.muscache.com/im/pictures/hosting/Hosting-1313574872188854127/original/630322bb-d6c9-4717-96bb-ef5d29431743.jpeg?im_w=720",
@@ -914,15 +941,18 @@
     "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTMxMzU3NDg3MjE4ODg0NjEyNw%3D%3D/original/3a9863c4-9113-4626-84d0-52b289597a41.jpeg?im_w=480"
   ];
 
-  let index = 0;
+  let index: number = 0;
   const thumbsWrap = document.getElementById("thumbs");
   const prevBtn = document.getElementById("prevBtn");
   const nextBtn = document.getElementById("nextBtn");
   const galleryStage = document.querySelector(".gallery-stage");
   
-  const stageImgs = [];
+  /** @type {HTMLImageElement[]} */
+  const stageImgs: HTMLImageElement[] = [];
 
-  // Initialize Gallery
+  /**
+   * Initialise la galerie en créant les images principales et les miniatures.
+   */
   photos.forEach((src, i) => {
     // Images principales
     const img = document.createElement("img");
@@ -930,7 +960,7 @@
     img.alt = `Photo La Villa Baumas ${i+1}`;
     if(i === 0) img.classList.add("active");
     // Insérer avant les contrôles
-    galleryStage.insertBefore(img, galleryStage.querySelector('.gallery-controls'));
+    galleryStage?.insertBefore(img, galleryStage.querySelector('.gallery-controls'));
     stageImgs.push(img);
 
     // Miniatures
@@ -939,63 +969,74 @@
     t.alt = `Miniature ${i+1}`;
     t.className = "thumb" + (i === 0 ? " active" : "");
     t.addEventListener("click", () => setIndex(i));
-    thumbsWrap.appendChild(t);
+    thumbsWrap?.appendChild(t);
   });
 
-  function setIndex(i) {
+  /**
+   * Met à jour l'index de la photo affichée et met en évidence la miniature correspondante.
+   * @param {number} i - Le nouvel index de la photo à afficher.
+   */
+  function setIndex(i: number): void {
     index = (i + photos.length) % photos.length;
     stageImgs.forEach((img, k) => img.classList.toggle("active", k === index));
     
-    const thumbsList = [...thumbsWrap.querySelectorAll(".thumb")];
+    const thumbsList = [...(thumbsWrap?.querySelectorAll(".thumb") || [])] as HTMLImageElement[];
     thumbsList.forEach((t, k) => t.classList.toggle("active", k === index));
     
     // Auto-scroll pour les miniatures sur mobile
     const activeThumb = thumbsList[index];
-    if(activeThumb) {
+    if(activeThumb && thumbsWrap) {
       const scrollLeft = activeThumb.offsetLeft - (thumbsWrap.clientWidth / 2) + (activeThumb.clientWidth / 2);
       thumbsWrap.scrollTo({ left: scrollLeft, behavior: 'smooth' });
     }
   }
 
-  function next() { setIndex(index + 1); }
-  function prev() { setIndex(index - 1); }
+  /**
+   * Affiche la photo suivante dans la galerie.
+   */
+  function next(): void { setIndex(index + 1); }
 
-  prevBtn.addEventListener("click", prev);
-  nextBtn.addEventListener("click", next);
+  /**
+   * Affiche la photo précédente dans la galerie.
+   */
+  function prev(): void { setIndex(index - 1); }
 
-  // Auto-play
-  let timer = setInterval(next, 5000);
-  galleryStage.addEventListener("mouseenter", () => clearInterval(timer));
-  galleryStage.addEventListener("mouseleave", () => { timer = setInterval(next, 5000); });
+  prevBtn?.addEventListener("click", prev);
+  nextBtn?.addEventListener("click", next);
+
+  // Auto-play de la galerie
+  let timer: ReturnType<typeof setInterval> | undefined = setInterval(next, 5000);
+  galleryStage?.addEventListener("mouseenter", () => clearInterval(timer));
+  galleryStage?.addEventListener("mouseleave", () => { timer = setInterval(next, 5000); });
   
-  // Support du balayage (swipe) tactile sur mobile
-  let touchStartX = 0;
-  let touchEndX = 0;
+  // Support du balayage (swipe) tactile sur mobile pour la galerie
+  let touchStartX: number = 0;
+  let touchEndX: number = 0;
   
-  galleryStage.addEventListener('touchstart', e => {
+  galleryStage?.addEventListener('touchstart', e => {
     touchStartX = e.changedTouches[0].screenX;
-    clearInterval(timer);
+    clearInterval(timer); // Arrête le diaporama pendant le swipe
   }, {passive: true});
   
-  galleryStage.addEventListener('touchend', e => {
+  galleryStage?.addEventListener('touchend', e => {
     touchEndX = e.changedTouches[0].screenX;
     if (touchStartX - touchEndX > 50) next(); // Swipe gauche
     if (touchEndX - touchStartX > 50) prev(); // Swipe droite
-    timer = setInterval(next, 5000);
+    timer = setInterval(next, 5000); // Redémarre le diaporama après le swipe
   }, {passive: true});
 
   // Gestion du bouton copier le lien
-  const airbnbLink = "https://www.airbnb.fr/rooms/1313574872188854127";
+  const airbnbLink: string = "https://www.airbnb.fr/rooms/1313574872188854127";
   const copyBtn = document.getElementById("copyLinkBtn");
   const copyResult = document.getElementById("copyResult");
 
-  copyBtn.addEventListener("click", async () => {
+  copyBtn?.addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(airbnbLink);
-      copyResult.classList.add("show");
-      setTimeout(() => copyResult.classList.remove("show"), 2000);
+      copyResult?.classList.add("show");
+      setTimeout(() => copyResult?.classList.remove("show"), 2000);
     } catch(e) {
-      alert("Copie impossible automatiquement. Copiez manuellement :\n" + airbnbLink);
+      alert("Copie impossible automatiquement. Veuillez copier manuellement le lien :\n" + airbnbLink);
     }
   });
 </script>
