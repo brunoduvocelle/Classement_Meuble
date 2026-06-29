@@ -1,501 +1,701 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculateur de Classement - Meublé de Tourisme</title>
-    <meta name="description" content="Outil officiel pour calculer les points de classement des meublés de tourisme de 1 à 5 étoiles.">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #4F46E5;
-            --primary-hover: #4338ca;
-            --success: #10B981;
-            --danger: #EF4444;
-            --warning: #F59E0B;
-            --bg-color: #f3f4f6;
-            --card-bg: rgba(255, 255, 255, 0.7);
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --glass-border: rgba(255, 255, 255, 0.5);
-            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Villa Baumas – St Restitut (Drôme)</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#111a2e;
+      --muted:#9fb0d0;
+      --text:#eaf1ff;
+      --accent:#7c5cff;
+      --accent2:#22c55e;
+      --border:rgba(255,255,255,.12);
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --radius:18px;
+    }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-color: #111827;
-                --card-bg: rgba(31, 41, 55, 0.7);
-                --text-main: #f9fafb;
-                --text-muted: #9ca3af;
-                --glass-border: rgba(255, 255, 255, 0.1);
-                --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            }
-        }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 500px at 20% -10%, rgba(124,92,255,.35), transparent 60%),
+                  radial-gradient(1000px 600px at 85% 0%, rgba(34,197,94,.22), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-color);
-            background-image: radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
-                              radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.15) 0px, transparent 50%);
-            background-attachment: fixed;
-            color: var(--text-main);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
+    header{
+      padding: 28px 18px 10px;
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      background: rgba(11,18,32,.7);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      z-index: 10;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 2rem;
-        }
+    .container{
+      width:min(1100px, 100%);
+      margin:0 auto;
+    }
 
-        @media (max-width: 900px) {
-            .container { grid-template-columns: 1fr; }
-        }
+    .topbar{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
 
-        header {
-            grid-column: 1 / -1;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:260px;
+    }
 
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
-        }
+    .logo{
+      width:42px; height:42px;
+      border-radius:14px;
+      background: linear-gradient(135deg, rgba(124,92,255,.9), rgba(34,197,94,.7));
+      box-shadow: 0 12px 30px rgba(124,92,255,.18);
+      border:1px solid rgba(255,255,255,.16);
+    }
 
-        .glass-panel {
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: var(--glass-shadow);
-        }
+    .brand h1{
+      margin:0;
+      font-size: 16px;
+      letter-spacing:.2px;
+      font-weight: 800;
+    }
+    .brand p{
+      margin:2px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
 
-        .chapter-title {
-            font-size: 1.5rem;
-            color: var(--primary);
-            margin: 2rem 0 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--primary);
-        }
+    nav a{
+      color: var(--muted);
+      text-decoration:none;
+      margin-left:16px;
+      font-weight:600;
+      font-size: 14px;
+    }
+    nav a:hover{ color: var(--text); }
 
-        .criterion {
-            background: rgba(128, 128, 128, 0.05);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: transform 0.2s;
-        }
-        
-        .criterion:hover {
-            transform: translateX(4px);
-            background: rgba(128, 128, 128, 0.1);
-        }
+    .hero{
+      padding: 26px 18px 10px;
+    }
 
-        .criterion-info { flex: 1; padding-right: 1rem; }
-        .criterion-id { font-weight: bold; color: var(--primary); margin-right: 0.5rem; }
-        .criterion-text { font-size: 0.95rem; }
-        .criterion-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+      align-items: stretch;
+    }
 
-        .criterion-controls { display: flex; gap: 0.5rem; }
+    @media (max-width: 900px){
+      .hero-grid{ grid-template-columns: 1fr; }
+    }
 
-        .radio-group input[type="radio"] { display: none; }
-        .radio-group label {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            border: 1px solid var(--text-muted);
-            color: var(--text-muted);
-            transition: all 0.2s ease;
-        }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
 
-        .radio-group input[type="radio"]:checked + label.lbl-oui {
-            background: var(--success); border-color: var(--success); color: white;
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
-        }
+    .hero-main{
+      padding: 18px;
+      overflow:hidden;
+      position:relative;
+    }
 
-        .radio-group input[type="radio"]:checked + label.lbl-non {
-            background: var(--danger); border-color: var(--danger); color: white;
-            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
-        }
+    .kicker{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(17,26,46,.55);
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .dot{
+      width:10px; height:10px;
+      border-radius:50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(124,92,255,.15);
+    }
 
-        .radio-group input[type="radio"]:checked + label.lbl-na {
-            background: var(--warning); border-color: var(--warning); color: white;
-            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
-        }
+    .hero-title{
+      margin: 14px 0 10px;
+      font-size: clamp(28px, 3.2vw, 42px);
+      line-height:1.1;
+      letter-spacing:-.6px;
+      font-weight: 900;
+    }
 
-        .results-panel { position: sticky; top: 2rem; height: fit-content; }
+    .hero-sub{
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 64ch;
+    }
 
-        .star-result {
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            border-radius: 8px;
-            background: rgba(128, 128, 128, 0.05);
-            border-left: 4px solid var(--text-muted);
-        }
+    .badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top: 10px;
+    }
 
-        .star-result.eligible { border-left-color: var(--success); background: rgba(16, 185, 129, 0.05); }
-        .star-result.not-eligible { border-left-color: var(--danger); background: rgba(239, 68, 68, 0.05); }
+    .badge{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(17,26,46,.45);
+      min-width: 220px;
+    }
+    .badge svg{ flex:0 0 auto; opacity:.95; }
+    .badge div{
+      display:flex; flex-direction:column;
+      gap:2px;
+    }
+    .badge strong{ font-size:14px; }
+    .badge span{ font-size: 13px; color: var(--muted); }
 
-        .star-header {
-            display: flex; justify-content: space-between; align-items: center;
-            font-weight: bold; font-size: 1.2rem; margin-bottom: 0.5rem;
-        }
-        .star-icon { color: #FBBF24; }
-        
-        .progress-bar {
-            height: 6px; background: rgba(128,128,128,0.2); border-radius: 3px; margin: 0.5rem 0; overflow: hidden;
-        }
-        .progress-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; }
+    .hero-aside{
+      padding: 18px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
 
-        .result-details { font-size: 0.85rem; color: var(--text-muted); }
-        .reason-fail { color: var(--danger); font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600; }
-    </style>
+    .section{
+      padding: 12px 18px 40px;
+    }
+
+    .section h2{
+      margin: 18px 0 10px;
+      font-size: 20px;
+      letter-spacing: -.2px;
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 850px){
+      .grid-2{ grid-template-columns: 1fr; }
+    }
+
+    .gallery{
+      width:100%;
+      border-radius: 16px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.2);
+    }
+
+    .gallery-stage{
+      position:relative;
+      aspect-ratio: 16/10;
+      background: rgba(255,255,255,.03);
+    }
+    .gallery-stage img{
+      width:100%; height:100%;
+      object-fit: cover;
+      display:block;
+      position:absolute;
+      inset:0;
+      opacity:0;
+      transform: scale(1.02);
+      transition: opacity .35s ease, transform .45s ease;
+    }
+    .gallery-stage img.active{
+      opacity:1;
+      transform: scale(1);
+    }
+
+    .gallery-controls{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 0 10px;
+      pointer-events:none;
+    }
+    .btn{
+      pointer-events:auto;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(10,15,28,.45);
+      color: var(--text);
+      border-radius: 14px;
+      width:42px; height:42px;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      backdrop-filter: blur(10px);
+      transition: transform .1s ease, background .2s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(10,15,28,.65); }
+    .btn:active{ transform: translateY(0px); }
+
+    .thumbs{
+      display:flex;
+      gap:10px;
+      padding: 12px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      overflow:auto;
+      background: rgba(17,26,46,.35);
+    }
+    .thumb{
+      width:78px; height:54px;
+      border-radius:12px;
+      object-fit:cover;
+      border: 1px solid rgba(255,255,255,.12);
+      opacity:.78;
+      cursor:pointer;
+      transition: opacity .15s ease, transform .15s ease, border-color .15s ease;
+      flex:0 0 auto;
+    }
+    .thumb:hover{
+      opacity:1;
+      transform: translateY(-1px);
+    }
+    .thumb.active{
+      opacity:1;
+      border-color: rgba(124,92,255,.8);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.14);
+    }
+
+    .cta{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .cta a.primary{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(124,92,255,.65);
+      background: linear-gradient(135deg, rgba(124,92,255,.9), rgba(124,92,255,.55));
+      color:white;
+      font-weight: 900;
+      letter-spacing:.2px;
+      transition: transform .1s ease, filter .2s ease;
+    }
+    .cta a.primary:hover{ transform: translateY(-1px); filter: brightness(1.02); }
+
+    .cta .hint{
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .activity{
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(17,26,46,.25);
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+    }
+    .activity .icon{
+      width:38px; height:38px;
+      border-radius: 14px;
+      background: rgba(124,92,255,.18);
+      border: 1px solid rgba(124,92,255,.35);
+      display:grid; place-items:center;
+      flex:0 0 auto;
+    }
+    .activity h3{
+      margin:0 0 4px;
+      font-size: 15px;
+    }
+    .activity p{
+      margin:0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .activity a{
+      display:inline-flex;
+      margin-top: 8px;
+      color: #dbe7ff;
+      text-decoration:none;
+      font-weight:800;
+      font-size: 13px;
+      border-bottom: 1px dashed rgba(219,231,255,.55);
+    }
+    .activity a:hover{
+      border-bottom-style: solid;
+      color:white;
+    }
+
+    footer{
+      padding: 26px 18px 34px;
+      color: var(--muted);
+      text-align:center;
+      border-top: 1px solid rgba(255,255,255,.08);
+      background: rgba(11,18,32,.55);
+    }
+    .small{
+      font-size: 13px;
+    }
+
+    /* Accessibility */
+    .sr-only{
+      position:absolute; width:1px; height:1px;
+      padding:0; margin:-1px; overflow:hidden;
+      clip:rect(0,0,0,0); border:0;
+    }
+  </style>
 </head>
+
 <body>
-
-<div class="container">
-    <header>
-        <h1>Classement Meublé de Tourisme</h1>
-        <p>Outil d'autodiagnostic basé sur l'arrêté du 24 novembre 2021</p>
-    </header>
-
-    <main class="glass-panel" id="form-container">
-        <!-- Criteria will be injected here by JS -->
-    </main>
-
-    <aside class="glass-panel results-panel">
-        <h2>Diagnostic en direct</h2>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Cochez les critères pour voir votre éligibilité de 1 à 5 étoiles.</p>
-        <div id="results-container">
-            <!-- Results injected here -->
+  <header>
+    <div class="container">
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            <h1>Villa Baumas · St Restitut (Drôme)</h1>
+            <p>Randonnées, activités & séjours — semaine ou week-end</p>
+          </div>
         </div>
-    </aside>
-</div>
+        <nav aria-label="Navigation principale">
+          <a href="#presentation">Présentation</a>
+          <a href="#galerie">Photos</a>
+          <a href="#activites">Randonnée & activités</a>
+          <a href="#airbnb">Location</a>
+        </nav>
+      </div>
+    </div>
+  </header>
 
-<script>
-    const criteriaData = [
-  [0, 'Prérequis', 'Un logement meublé d\'une pièce d\'habitation destiné à accueillir une ou deux personnes doit avoir une surface minimale de 9m² lorsque la cuisine est séparée ou d\'au moins 12m² lorsqu\'il existe un coin cuisine', 0, 'PRQ', 'PRQ', 'PRQ', 'PRQ', 'PRQ'],
-  [1, '1. Equipements et aménagements', 'Surface totale minimum (cuisine et coin cuisine compris) du logement meublé hors salle d\'eau et toilettes', 5, 'X', 'X', 'X', 'X', 'X'],
-  [2, '1. Equipements et aménagements', 'Surface totale majorée', 5, 'O', 'O', 'O', 'O', 'O'],
-  [3, '1. Equipements et aménagements', 'Prise de courant libre dans chaque pièce d\'habitation', 1, 'X', 'X', 'X', 'X', 'X'],
-  [4, '1. Equipements et aménagements', 'Tous les éclairages du logement fonctionnent et sont en bon état', 3, 'X', 'X', 'X', 'X', 'X'],
-  [5, '1. Equipements et aménagements', 'Mise à disposition d\'un téléphone privatif à l\'intérieur du logement', 1, 'O', 'O', 'O', 'O', 'O'],
-  [6, '1. Equipements et aménagements', 'Accès internet par un réseau local sans fil (WiFi)', 2, 'O', 'X', 'X', 'X', 'X'],
-  [7, '1. Equipements et aménagements', 'Accès internet filaire avec câble fourni', 2, 'O', 'O', 'O', 'O', 'O'],
-  [8, '1. Equipements et aménagements', 'Télévision à écran plat avec télécommande', 2, 'O', 'X', 'X', 'X', 'X'],
-  [9, '1. Equipements et aménagements', 'Accès à des chaînes supplémentaires à l\'offre de la TNT', 2, 'O', 'O', 'O', 'X', 'X'],
-  [10, '1. Equipements et aménagements', 'Possibilité d\'accéder à au moins deux chaînes internationales', 1, 'O', 'O', 'O', 'O', 'X'],
-  [11, '1. Equipements et aménagements', 'Radio', 2, 'O', 'O', 'X', 'X', 'X'],
-  [12, '1. Equipements et aménagements', 'Enceinte connectée', 1, 'O', 'O', 'O', 'O', 'X'],
-  [13, '1. Equipements et aménagements', 'Mise à disposition d\'un système de lecture de vidéos', 2, 'O', 'O', 'O', 'O', 'X'],
-  [14, '1. Equipements et aménagements', 'Occultation opaque : extérieure ou intérieure dans chaque pièce', 3, 'X', 'X', 'X', 'X', 'X'],
-  [15, '1. Equipements et aménagements', 'Le logement est équipé de double vitrage', 3, 'O', 'O', 'O', 'X', 'X'],
-  [16, '1. Equipements et aménagements', 'Existence d\'un système de chauffage en état de fonctionnement', 5, 'X', 'X', 'X', 'X', 'X'],
-  [17, '1. Equipements et aménagements', 'Existence d\'un système de climatisation et/ou rafraîchissement d\'air', 3, 'O', 'O', 'O', 'O', 'X'],
-  [18, '1. Equipements et aménagements', 'Machine à laver le linge pour les logements de 4 personnes et plus', 3, 'O', 'O', 'X', 'X', 'X'],
-  [19, '1. Equipements et aménagements', 'Séche-linge électrique pour les logements de 6 personnes et plus', 2, 'O', 'O', 'O', 'X', 'X'],
-  [20, '1. Equipements et aménagements', 'Etendoir ou séchoir à linge à l\'intérieur du logement', 2, 'X', 'X', 'X', 'X', 'X'],
-  [21, '1. Equipements et aménagements', 'Ustensiles de ménage appropriés au logement', 3, 'X', 'X', 'X', 'X', 'X'],
-  [22, '1. Equipements et aménagements', 'Fer et table à repasser', 2, 'O', 'O', 'X', 'X', 'X'],
-  [23, '1. Equipements et aménagements', 'Placards ou éléments de rangement dans le logement', 3, 'X', 'X', 'NA', 'NA', 'NA'],
-  [24, '1. Equipements et aménagements', 'Placards ou éléments de rangement dans chaque pièce d\'habitation', 3, 'O', 'O', 'X', 'X', 'X'],
-  [25, '1. Equipements et aménagements', 'Présence d\'une table et d\'assises correspondant à la capacité d\'accueil', 4, 'X', 'X', 'X', 'X', 'X'],
-  [26, '1. Equipements et aménagements', 'Présence d\'un canapé ou fauteuil(s) adapté(s)', 3, 'X', 'X', 'X', 'X', 'X'],
-  [27, '1. Equipements et aménagements', 'Présence d\'une table basse', 1, 'X', 'X', 'X', 'X', 'X'],
-  [28, '1. Equipements et aménagements', 'Respect des dimensions du (ou des) lit(s)', 4, 'X', 'X', 'X', 'X', 'X'],
-  [29, '1. Equipements et aménagements', 'Matelas haute densité et / ou avec une épaisseur de qualité', 2, 'O', 'O', 'O', 'O', 'O'],
-  [30, '1. Equipements et aménagements', 'Présence d\'oreiller(s) en quantité suffisante', 2, 'X', 'X', 'X', 'X', 'X'],
-  [31, '1. Equipements et aménagements', 'Deux couvertures ou une couette par lit', 2, 'X', 'X', 'X', 'X', 'X'],
-  [32, '1. Equipements et aménagements', 'Matelas et oreillers protégés par des alaises ou des housses amovibles', 2, 'X', 'X', 'X', 'X', 'X'],
-  [33, '1. Equipements et aménagements', 'Eclairage en-tête de lit par personne avec interrupteur individuel', 2, 'X', 'X', 'X', 'X', 'X'],
-  [34, '1. Equipements et aménagements', 'Interrupteur ou système de commande de l\'éclairage central près du lit', 2, 'O', 'O', 'O', 'X', 'X'],
-  [35, '1. Equipements et aménagements', 'Présence d\'une prise de courant libre située près du lit', 1, 'O', 'O', 'O', 'O', 'O'],
-  [36, '1. Equipements et aménagements', 'Présence d\'une table de chevet par personne', 2, 'O', 'O', 'X', 'X', 'X'],
-  [37, '1. Equipements et aménagements', 'Une salle d\'eau privative dans un espace clos et aéré intérieur', 2, 'X', 'X', 'X', 'X', 'X'],
-  [38, '1. Equipements et aménagements', 'Une salle d\'eau privative avec accès indépendant', 3, 'X', 'X', 'X', 'X', 'X'],
-  [39, '1. Equipements et aménagements', 'Présence d\'une salle d\'eau équipée (lavabo, douche/baignoire)', 3, 'X', 'X', 'X', 'NA', 'NA'],
-  [40, '1. Equipements et aménagements', 'Présence d\'une salle d\'eau équipée (grandes dimensions)', 2, 'O', 'O', 'O', 'X', 'X'],
-  [41, '1. Equipements et aménagements', 'Un WC privatif intérieur au logement', 2, 'X', 'X', 'X', 'X', 'NA'],
-  [42, '1. Equipements et aménagements', 'Un WC privatif intérieur indépendant de la salle d\'eau', 2, 'O', 'O', 'O', 'O', 'X'],
-  [43, '1. Equipements et aménagements', 'Une deuxième salle d\'eau privative', 5, 'X', 'X', 'X', 'X', 'X'],
-  [44, '1. Equipements et aménagements', 'Présence d\'une salle d\'eau ainsi équipée (2ème)', 3, 'X', 'X', 'X', 'X', 'X'],
-  [45, '1. Equipements et aménagements', 'Un WC privatif (2ème)', 2, 'X', 'X', 'X', 'X', 'X'],
-  [46, '1. Equipements et aménagements', 'Deux points lumineux dont un sur le lavabo', 2, 'O', 'O', 'X', 'X', 'X'],
-  [47, '1. Equipements et aménagements', 'Présence de produits d\'accueil', 3, 'O', 'O', 'X', 'X', 'X'],
-  [48, '1. Equipements et aménagements', 'Une prise de courant libre à proximité du miroir', 2, 'O', 'X', 'X', 'X', 'X'],
-  [49, '1. Equipements et aménagements', 'Patère(s) ou porte-serviettes', 1, 'X', 'X', 'X', 'X', 'X'],
-  [50, '1. Equipements et aménagements', 'Sèche-serviettes électrique', 2, 'O', 'O', 'O', 'O', 'X'],
-  [51, '1. Equipements et aménagements', 'Miroir de salle de bain', 2, 'X', 'X', 'X', 'X', 'X'],
-  [52, '1. Equipements et aménagements', 'Miroir en pied', 2, 'O', 'O', 'O', 'X', 'X'],
-  [53, '1. Equipements et aménagements', 'Tablette sous miroir, plan vasque ou étagère proche du miroir', 2, 'X', 'X', 'X', 'X', 'X'],
-  [54, '1. Equipements et aménagements', 'Espace(s) de rangement supplémentaire(s)', 2, 'O', 'O', 'X', 'X', 'X'],
-  [55, '1. Equipements et aménagements', 'Sèche-cheveux électrique en nombre suffisant', 1, 'O', 'O', 'X', 'X', 'X'],
-  [56, '1. Equipements et aménagements', 'Evier avec robinet mélangeur ou mitigeur', 3, 'X', 'X', 'X', 'X', 'X'],
-  [57, '1. Equipements et aménagements', 'Nombre de foyers respectés (cuisson)', 3, 'X', 'X', 'X', 'X', 'X'],
-  [58, '1. Equipements et aménagements', 'Plaque vitrocéramique, à induction ou à gaz', 2, 'O', 'O', 'O', 'O', 'O'],
-  [59, '1. Equipements et aménagements', 'Four ou mini-four', 3, 'X', 'X', 'X', 'X', 'X'],
-  [60, '1. Equipements et aménagements', 'Four à micro-ondes', 2, 'O', 'X', 'X', 'X', 'X'],
-  [61, '1. Equipements et aménagements', 'Ventilation ou ventilation mécanique contrôlée', 4, 'X', 'X', 'X', 'X', 'X'],
-  [62, '1. Equipements et aménagements', 'Hotte aspirante', 2, 'O', 'O', 'O', 'O', 'O'],
-  [63, '1. Equipements et aménagements', 'Quantité de vaisselle de table non dépareillée minimum par personne', 3, 'X', 'X', 'X', 'X', 'X'],
-  [64, '1. Equipements et aménagements', 'Vaisselle supplémentaire : 1 coupe à champagne, 1 verre à apéritif par personne', 1, 'O', 'O', 'O', 'X', 'X'],
-  [65, '1. Equipements et aménagements', 'Equipement minimum pour la préparation des repas', 3, 'X', 'X', 'X', 'X', 'X'],
-  [66, '1. Equipements et aménagements', 'Au moins deux équipements de petit-électroménager', 2, 'O', 'X', 'X', 'X', 'X'],
-  [67, '1. Equipements et aménagements', 'Autocuiseur ou cuit-vapeur ou robot de cuisine multifonctions', 3, 'O', 'O', 'O', 'O', 'O'],
-  [68, '1. Equipements et aménagements', 'Cafetière', 2, 'X', 'X', 'X', 'X', 'X'],
-  [69, '1. Equipements et aménagements', 'Machine à expresso', 2, 'O', 'O', 'O', 'X', 'X'],
-  [70, '1. Equipements et aménagements', 'Bouilloire', 1, 'O', 'X', 'X', 'X', 'X'],
-  [71, '1. Equipements et aménagements', 'Grille-pain', 1, 'O', 'X', 'X', 'X', 'X'],
-  [72, '1. Equipements et aménagements', 'Lave-vaisselle pour les logements à partir de 2 personnes', 2, 'O', 'O', 'O', 'X', 'X'],
-  [73, '1. Equipements et aménagements', 'Lave-vaisselle de 6 couverts ou plus pour les logements à partir de 4 personnes', 2, 'O', 'O', 'X', 'X', 'X'],
-  [74, '1. Equipements et aménagements', 'Réfrigérateur avec compartiment conservateur', 4, 'X', 'X', 'X', 'X', 'X'],
-  [75, '1. Equipements et aménagements', 'Présence d\'un congélateur ou compartiment congélateur', 2, 'O', 'O', 'X', 'X', 'X'],
-  [76, '1. Equipements et aménagements', 'Poubelle fermée avec couvercle', 1, 'X', 'X', 'X', 'X', 'X'],
-  [77, '1. Equipements et aménagements', 'Ascenseur : Pour accéder au 4ème étage à partir du rez-de-chaussée', 4, 'X', 'X', 'NA', 'NA', 'NA'],
-  [78, '1. Equipements et aménagements', 'Ascenseur : Pour accéder au 3ème étage à partir du rez-de-chaussée', 4, 'O', 'O', 'X', 'X', 'X'],
-  [79, '1. Equipements et aménagements', 'Emplacement(s) parking à proximité', 4, 'X', 'X', 'X', 'X', 'X'],
-  [80, '1. Equipements et aménagements', 'Emplacement(s) parking privatif(s)', 3, 'O', 'O', 'X', 'X', 'X'],
-  [81, '1. Equipements et aménagements', 'Garage ou abri couvert privatif', 2, 'O', 'O', 'O', 'O', 'O'],
-  [82, '1. Equipements et aménagements', 'Logement avec balcon, loggia ou veranda', 2, 'O', 'O', 'O', 'O', 'O'],
-  [83, '1. Equipements et aménagements', 'Logement avec terrasse ou jardin privé', 3, 'O', 'O', 'O', 'O', 'O'],
-  [84, '1. Equipements et aménagements', 'Logement avec parc ou jardin', 4, 'O', 'O', 'O', 'O', 'O'],
-  [85, '1. Equipements et aménagements', 'Présence de mobilier de jardin privatif propre et en bon état', 2, 'O', 'O', 'O', 'O', 'O'],
-  [86, '1. Equipements et aménagements', 'Mise à disposition d’une plancha extérieure et/ou d’un barbecue', 2, 'O', 'O', 'O', 'O', 'O'],
-  [87, '1. Equipements et aménagements', 'Un équipement léger de loisirs, détente ou sport, dédié au logement', 2, 'O', 'O', 'O', 'X', 'X'],
-  [88, '1. Equipements et aménagements', 'Un équipement aménagé de loisirs, détente ou sport', 2, 'O', 'O', 'O', 'O', 'O'],
-  [89, '1. Equipements et aménagements', 'Piscine extérieure ou intérieure', 2, 'O', 'O', 'O', 'O', 'O'],
-  [90, '1. Equipements et aménagements', 'Piscine extérieure ou intérieure chauffée', 2, 'O', 'O', 'O', 'O', 'O'],
-  [91, '1. Equipements et aménagements', 'Existence de rangement(s) pour équipement sportif', 1, 'O', 'O', 'O', 'O', 'O'],
-  [92, '1. Equipements et aménagements', 'Logement avec vue paysagère', 2, 'O', 'O', 'O', 'O', 'O'],
-  [93, '1. Equipements et aménagements', 'Logement avec accès immédiat à un environnement d\'activités', 3, 'O', 'O', 'O', 'O', 'O'],
-  [94, '1. Equipements et aménagements', 'Logement avec accès immédiat aux commerces, services et transports', 3, 'O', 'O', 'O', 'O', 'O'],
-  [95, '1. Equipements et aménagements', 'Les sanitaires sont propres et en bon état', 5, 'X ONC', 'X ONC', 'X ONC', 'X ONC', 'X ONC'],
-  [96, '1. Equipements et aménagements', 'Les sols murs et plafonds sont propres et en bon état', 5, 'X ONC', 'X ONC', 'X ONC', 'X ONC', 'X ONC'],
-  [97, '1. Equipements et aménagements', 'Le mobilier est propre et en bon état', 5, 'X ONC', 'X ONC', 'X ONC', 'X ONC', 'X ONC'],
-  [98, '1. Equipements et aménagements', 'La literie est propre et en bon état', 5, 'X ONC', 'X ONC', 'X ONC', 'X ONC', 'X ONC'],
-  [99, '1. Equipements et aménagements', 'La cuisine ou coin cuisine et les équipements sont propres', 5, 'X ONC', 'X ONC', 'X ONC', 'X ONC', 'X ONC'],
-  [100, '2. Services aux clients', 'Mise à disposition de brochures d\'informations locales et touristiques', 3, 'X', 'X', 'X', 'X', 'X'],
-  [101, '2. Services aux clients', 'Mise à disposition d\'un livret d\'accueil', 2, 'O', 'O', 'X', 'X', 'X'],
-  [102, '2. Services aux clients', 'Accueil sur place par le propriétaire ou son représentant', 3, 'O', 'X', 'X', 'X', 'X'],
-  [103, '2. Services aux clients', 'Cadeau de bienvenue à l\'arrivée du client', 2, 'O', 'O', 'O', 'X', 'X'],
-  [104, '2. Services aux clients', 'Existence d\'une boite à clé ou système équivalent', 2, 'O', 'O', 'O', 'O', 'O'],
-  [105, '2. Services aux clients', 'Draps de lit proposés systématiquement par le loueur', 2, 'X', 'X', 'X', 'X', 'X'],
-  [106, '2. Services aux clients', 'Linge de toilette proposé systématiquement par le loueur', 2, 'X', 'X', 'X', 'X', 'X'],
-  [107, '2. Services aux clients', 'Linge de table', 2, 'O', 'O', 'X', 'X', 'X'],
-  [108, '2. Services aux clients', 'Lits faits à l\'arrivée proposés sytématiquement', 2, 'O', 'O', 'O', 'X', 'X'],
-  [109, '2. Services aux clients', 'Matériel pour bébé à la demande', 2, 'O', 'O', 'X', 'X', 'X'],
-  [110, '2. Services aux clients', 'Service de ménage proposé systématiquement', 2, 'O', 'X', 'X', 'X', 'X'],
-  [111, '2. Services aux clients', 'Présence de produits d\'entretien', 2, 'X', 'X', 'X', 'X', 'X'],
-  [112, '2. Services aux clients', 'Adaptateurs électriques', 2, 'O', 'O', 'O', 'X', 'X'],
-  [113, '2. Services aux clients', 'Existence d\'un site internet ou d\'une page internet dédiée', 2, 'O', 'O', 'O', 'X', 'X'],
-  [114, '2. Services aux clients', 'Existence d\'un site internet ou page internet en langue étrangère', 1, 'O', 'O', 'O', 'X', 'X'],
-  [115, '2. Services aux clients', 'Animaux de compagnie admis', 2, 'O', 'O', 'O', 'O', 'O'],
-  [116, '3. Accessibilité et développement durable', 'Informations concernant l\'accessibilité sur les supports d\'information', 2, 'X', 'X', 'X', 'X', 'X'],
-  [117, '3. Accessibilité et développement durable', 'Mise à disposition de télécommande à grosses touches et de couleurs contrastées', 2, 'O', 'O', 'O', 'O', 'O'],
-  [118, '3. Accessibilité et développement durable', 'Présence d\'un siège de douche avec barre d\'appui', 2, 'O', 'O', 'O', 'O', 'O'],
-  [119, '3. Accessibilité et développement durable', 'Présence de WC avec barre d\'appui', 2, 'O', 'O', 'O', 'O', 'O'],
-  [120, '3. Accessibilité et développement durable', 'Largeur de toutes les portes adaptées', 2, 'O', 'O', 'O', 'O', 'O'],
-  [121, '3. Accessibilité et développement durable', 'Document accessible mis à disposition', 1, 'X', 'X', 'X', 'X', 'X'],
-  [122, '3. Accessibilité et développement durable', 'Obtention du label Tourisme et Handicap', 3, 'O', 'O', 'O', 'O', 'O'],
-  [123, '3. Accessibilité et développement durable', 'Mise en œuvre d\'une mesure de réduction de consommation d\'énergie', 3, 'X', 'X', 'X', 'X', 'X'],
-  [124, '3. Accessibilité et développement durable', 'Mise en œuvre d\'une mesure de réduction d\'énergie supplémentaire', 1, 'O', 'O', 'O', 'O', 'O'],
-  [125, '3. Accessibilité et développement durable', 'Borne de recharge pour les véhicules électriques', 2, 'O', 'O', 'O', 'O', 'O'],
-  [126, '3. Accessibilité et développement durable', 'Mise en œuvre d\'une mesure de réduction de consommation d\'eau', 3, 'X', 'X', 'X', 'X', 'X'],
-  [127, '3. Accessibilité et développement durable', 'Mise en œuvre d\'une mesure de réduction d\'eau supplémentaire', 1, 'O', 'O', 'O', 'O', 'O'],
-  [128, '3. Accessibilité et développement durable', 'Existence d\'un système de tri des déchets dédié au logement', 1, 'X', 'X', 'X', 'X', 'X'],
-  [129, '3. Accessibilité et développement durable', 'Existence d\'un composteur', 1, 'O', 'O', 'O', 'O', 'O'],
-  [130, '3. Accessibilité et développement durable', 'Sensibilisation des clients sur les actions respect de l\'environnement', 2, 'X', 'X', 'X', 'X', 'X'],
-  [131, '3. Accessibilité et développement durable', 'Présence de produits d\'accueil écologiques dans la salle de bains', 2, 'O', 'O', 'O', 'O', 'O'],
-  [132, '3. Accessibilité et développement durable', 'Mise à disposition d\'au moins deux produits d\'entretien respectueux de l\'environnement', 1, 'X', 'X', 'X', 'X', 'X'],
-  [133, '3. Accessibilité et développement durable', 'Obtention d\'un label environnemental', 3, 'O', 'O', 'O', 'O', 'O']
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="card hero-main" id="presentation">
+          <div class="kicker"><span class="dot" aria-hidden="true"></span> Séjour nature & détente</div>
+          <h2 class="hero-title">Découvrez Villa Baumas</h2>
+          <p class="hero-sub">
+            Une villa accueillante pour profiter du calme en Drôme provençale. Parfait pour explorer les paysages autour de
+            <strong>St Restitut</strong> : balades, points de vue et activités en pleine nature.
+          </p>
+
+          <div class="badges" role="list">
+            <div class="badge" role="listitem">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M7 11l3 3 7-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div>
+                <strong>Location flexible</strong>
+                <span>Semaine ou week-end</span>
+              </div>
+            </div>
+
+            <div class="badge" role="listitem">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 22s8-4 8-10a8 8 0 1 0-16 0c0 6 8 10 8 10Z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M9.5 12h.01M14.5 12h.01" stroke="white" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+              <div>
+                <strong>Animaux acceptés</strong>
+                <span>Amenez votre compagnon</span>
+              </div>
+            </div>
+
+            <div class="badge" role="listitem">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 0 1 18 0Z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M12 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="white" stroke-width="2"/>
+              </svg>
+              <div>
+                <strong>Proche des sentiers</strong>
+                <span>Idées de randonnées & activités</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="card hero-aside">
+          <div class="cta">
+            <a class="primary" href="#airbnb" aria-label="Aller à la section location">
+              Louer via Airbnb
+            </a>
+            <div class="hint">
+              Ajoute simplement le <strong>lien Airbnb</strong> de ta villa (ID/URL) dans le code si besoin.
+              <br/>Je te mets les liens “recherche” en attendant.
+            </div>
+          </div>
+
+          <div class="gallery" id="galerie" aria-label="Galerie photos de Villa Baumas">
+            <div class="gallery-stage">
+              <!-- Photos injectées via JS -->
+              <div class="gallery-controls" aria-hidden="false">
+                <button class="btn" id="prevBtn" type="button" aria-label="Photo précédente">‹</button>
+                <button class="btn" id="nextBtn" type="button" aria-label="Photo suivante">›</button>
+              </div>
+            </div>
+            <div class="thumbs" id="thumbs"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="activites">
+      <div class="container">
+        <h2>Randonnée & activités proches de St Restitut</h2>
+        <p style="margin-top:-2px; color: var(--muted); max-width: 80ch;">
+          Voici des idées et des liens pratiques. Tu peux ouvrir directement les pages et rechercher des parcours autour de St Restitut.
+        </p>
+
+        <div class="grid-2" style="margin-top:14px;">
+          <div class="card" style="padding:14px;">
+            <div class="list">
+              <div class="activity">
+                <div class="icon" aria-hidden="true">🥾</div>
+                <div>
+                  <h3>Randonnées (recherche autour de St Restitut)</h3>
+                  <p>Parcours, niveaux et cartes—pratique pour trouver vite.</p>
+                  <a href="https://www.komoot.com/search#/search/location/st%20restitut" target="_blank" rel="noopener">Voir sur Komoot</a>
+                </div>
+              </div>
+
+              <div class="activity">
+                <div class="icon" aria-hidden="true">🗺️</div>
+                <div>
+                  <h3>Cartes de sentiers & points d’intérêt</h3>
+                  <p>Exploration simple de la zone et des environs.</p>
+                  <a href="https://www.openstreetmap.org/search?query=St%20Restitut%2C%20France" target="_blank" rel="noopener">Voir sur OpenStreetMap</a>
+                </div>
+              </div>
+
+              <div class="activity">
+                <div class="icon" aria-hidden="true">🏞️</div>
+                <div>
+                  <h3>Inspiration balades (parcours utilisateurs)</h3>
+                  <p>Exemples de randonnées, photos et traces.</p>
+                  <a href="https://www.wikiloc.com/wikiloc/spots/search.do?query=st%20restitut" target="_blank" rel="noopener">Voir sur Wikiloc</a>
+                </div>
+              </div>
+
+              <div class="activity">
+                <div class="icon" aria-hidden="true">📍</div>
+                <div>
+                  <h3>Activités outdoor & sentiers</h3>
+                  <p>Recherches faciles autour de votre destination.</p>
+                  <a href="https://www.alltrails.com/search?query=st%20restitut" target="_blank" rel="noopener">Voir sur AllTrails</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:14px;">
+            <div class="list">
+              <div class="activity">
+                <div class="icon" aria-hidden="true">🚴</div>
+                <div>
+                  <h3>Idées balades / vélo (même logique que la rando)</h3>
+                  <p>Pour combiner chemins et points de vue.</p>
+                  <a href="https://www.komoot.com/search#/search/location/st%20restitut?ref=google_location_search" target="_blank" rel="noopener">Recherche vélo sur Komoot</a>
+                </div>
+              </div>
+
+              <div class="activity">
+                <div class="icon" aria-hidden="true">🏛️</div>
+                <div>
+                  <h3>Sorties & patrimoine autour de la Drôme</h3>
+                  <p>Pour alterner randonnée et découvertes locales.</p>
+                  <a href="https://www.google.com/maps/search/?api=1&query=activit%C3%A9s%20%C3%A0%20proximit%C3%A9%20de%20St%20Restitut" target="_blank" rel="noopener">Voir activités sur Google Maps</a>
+                </div>
+              </div>
+
+              <div class="activity">
+                <div class="icon" aria-hidden="true">🌄</div>
+                <div>
+                  <h3>Plan & carte “à la carte”</h3>
+                  <p>Un aperçu rapide pour choisir vos excursions.</p>
+                  <a href="https://www.google.com/maps/search/?api=1&query=randonn%C3%A9e%20pr%C3%A8s%20de%20St%20Restitut%20Dr%C3%B4me" target="_blank" rel="noopener">Randonnées sur Google Maps</a>
+                </div>
+              </div>
+
+              <div class="activity">
+                <div class="icon" aria-hidden="true">⛺</div>
+                <div>
+                  <h3>Préparer vos sorties (météo & conditions)</h3>
+                  <p>Conseil : vérifiez les conditions du jour.</p>
+                  <a href="https://www.meteoblue.com/fr/meteo/localisation/st-restitut_franche-comte_?_" target="_blank" rel="noopener">Météo (recherche)</a>
+                </div>
+              </div>
+            </div>
+
+            <p style="margin:12px 4px 0; color: var(--muted); font-size:13px;">
+              Si tu me donnes 3-5 activités “phare” que tu veux mettre en avant (ex : lieux, marchés, villages, falaises, etc.),
+              je te les personnalise en dur dans la liste.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="airbnb">
+      <div class="container">
+        <h2>Location : à la semaine ou pour un week-end (Airbnb)</h2>
+
+        <div class="card" style="padding: 16px;">
+          <div style="display:grid; grid-template-columns: 1.2fr .8fr; gap:14px; align-items:start;">
+            <div>
+              <p style="margin:0; color:var(--muted);">
+                Tu peux louer **Villa Baumas** :
+                <strong>• à la semaine</strong> pour profiter pleinement,
+                <strong>• ou pour un week-end</strong> pour une escapade nature.
+              </p>
+
+              <p style="margin:12px 0 0; color:var(--muted);">
+                Les <strong>animaux sont acceptés</strong>, pour que toute la famille (à pattes) soit du voyage.
+              </p>
+
+              <div style="margin-top:14px; display:flex; flex-wrap:wrap; gap:10px;">
+                <a class="primary" style="text-decoration:none;" href="https://www.airbnb.com/s/St-Restitut--Dr%C3%B4me--France/homes?tab_id=home_tab&query=St%20Restitut%2C%20Dr%C3%B4me%2C%20France" target="_blank" rel="noopener">
+                  Rechercher sur Airbnb (St Restitut)
+                </a>
+                <button id="copyLinkBtn" class="btn" type="button" style="height:auto; padding:10px 12px;">
+                  Copier un lien
+                </button>
+              </div>
+
+              <p class="hint" id="copyResult" style="margin:10px 0 0; display:none;">
+                Lien copié ✅
+              </p>
+
+              <p class="hint" style="margin-top:10px;">
+                <strong>Option rapide :</strong> si tu as l’URL exacte d’Airbnb de ta villa,
+                envoie-la moi et je te l’intègre à la place de la recherche.
+              </p>
+            </div>
+
+            <div style="border-left:1px solid rgba(255,255,255,.10); padding-left:14px;">
+              <h3 style="margin-top:0;">Checklist voyageurs</h3>
+              <ul style="margin:8px 0 0; color: var(--muted); padding-left:18px;">
+                <li>Randonnée : parcours près de St Restitut</li>
+                <li>Arrivée flexible : semaine ou week-end</li>
+                <li>Animaux acceptés</li>
+                <li>Prévoir : chaussures + eau</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="small">
+        Villa Baumas · St Restitut (Drôme) — Site vitrine (HTML/JS).<br/>
+        Images : liens fournis par vous.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Photos fournies par l'utilisateur
+    const photos = [
+      "https://a0.muscache.com/im/pictures/hosting/Hosting-1313574872188854127/original/f9a59360-6463-48bc-9561-b2c1d1ba44b2.jpeg?im_w=1200",
+      "https://a0.muscache.com/im/pictures/hosting/Hosting-1313574872188854127/original/630322bb-d6c9-4717-96bb-ef5d29431743.jpeg?im_w=720",
+      "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTMwOTMxODk0OTYzNzI5MTY0Ng%3D%3D/original/1b48f947-3bda-4d24-b4fa-5477580ff7ee.jpeg?im_w=720",
+      "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTMxMzU3NDg3MjE4ODg1NDEyNw%3D%3D/original/35e3eacc-dd5a-451a-957e-76d39e853638.jpeg?im_w=720",
+      // déclinaisons 480 (je les réutilise comme vignettes)
+      "https://a0.muscache.com/im/pictures/hosting/Hosting-1313574872188854127/original/f9a59360-6463-48bc-9561-b2c1d1ba44b2.jpeg?im_w=480",
+      "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTMxMzU3NDg3MjE4ODg1NDEyNw%3D%3D/original/9cfbe0b6-e23b-4330-8f48-66b3dbdb322e.jpeg?im_w=480",
+      "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTMxMzU3NDg3MjE4ODg1NDEyNw%3D%3D/original/3a9863c4-9113-4626-84d0-52b289597a41.jpeg?im_w=480"
     ];
 
-    const criteria = criteriaData.map(c => ({
-        id: c[0] === 0 ? 'PRQ1' : c[0],
-        chapter: c[1],
-        text: c[2],
-        points: c[3],
-        s: [c[4], c[5], c[6], c[7], c[8]]
-    }));
+    // On évite de mettre deux fois la même photo trop souvent dans une galerie.
+    // Mais comme vous avez donné 7 liens, on les affiche tels quels.
+    let index = 0;
+    const stage = document.querySelector(".gallery-stage");
+    const thumbsWrap = document.getElementById("thumbs");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
 
-    const selections = {};
+    // Créer les éléments images pour la scène + miniatures
+    const stageImgs = [];
+    photos.forEach((src, i) => {
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = `Photo Villa Baumas ${i+1}`;
+      if (i === 0) img.classList.add("active");
+      stage.appendChild(img);
+      stageImgs.push(img);
 
-    function init() {
-        const formContainer = document.getElementById('form-container');
-        let currentChapter = '';
+      const t = document.createElement("img");
+      t.src = src;
+      t.alt = `Miniature ${i+1}`;
+      t.className = "thumb" + (i === 0 ? " active" : "");
+      t.addEventListener("click", () => {
+        setIndex(i);
+      });
+      thumbsWrap.appendChild(t);
+    });
 
-        criteria.forEach(c => {
-            if (c.chapter !== currentChapter) {
-                currentChapter = c.chapter;
-                const chapterEl = document.createElement('h2');
-                chapterEl.className = 'chapter-title';
-                chapterEl.textContent = currentChapter;
-                formContainer.appendChild(chapterEl);
-            }
-
-            const div = document.createElement('div');
-            div.className = 'criterion';
-            
-            let statusesDisplay = '';
-            [1,2,3,4,5].forEach((s, idx) => {
-               if(c.s[idx] && c.s[idx] !== 'NA') {
-                   statusesDisplay += `<span title="Etoile ${s}">${s}*: ${c.s[idx]}</span> `;
-               }
-            });
-
-            div.innerHTML = `
-                <div class="criterion-info">
-                    <div><span class="criterion-id">#${c.id}</span> <span class="criterion-text">${c.text}</span></div>
-                    <div class="criterion-meta">${c.points} pts | Applicabilité : ${statusesDisplay}</div>
-                </div>
-                <div class="criterion-controls radio-group">
-                    <input type="radio" id="c_${c.id}_oui" name="c_${c.id}" value="oui">
-                    <label class="lbl-oui" for="c_${c.id}_oui">OUI</label>
-                    
-                    <input type="radio" id="c_${c.id}_non" name="c_${c.id}" value="non">
-                    <label class="lbl-non" for="c_${c.id}_non">NON</label>
-                    
-                    <input type="radio" id="c_${c.id}_na" name="c_${c.id}" value="na">
-                    <label class="lbl-na" for="c_${c.id}_na">N/A</label>
-                </div>
-            `;
-            formContainer.appendChild(div);
-
-            const radios = div.querySelectorAll('input[type="radio"]');
-            radios.forEach(radio => {
-                radio.addEventListener('change', (e) => {
-                    selections[c.id] = e.target.value;
-                    calculate();
-                });
-            });
-        });
-
-        calculate();
+    function setIndex(i){
+      index = (i + photos.length) % photos.length;
+      stageImgs.forEach((img, k) => img.classList.toggle("active", k === index));
+      [...thumbsWrap.querySelectorAll(".thumb")].forEach((t, k) => t.classList.toggle("active", k === index));
     }
 
-    function calculate() {
-        const resultsContainer = document.getElementById('results-container');
-        resultsContainer.innerHTML = '';
-        
-        const stars = [1, 2, 3, 4, 5];
-        const optThresholds = [0.05, 0.10, 0.20, 0.30, 0.40];
+    function next(){ setIndex(index + 1); }
+    function prev(){ setIndex(index - 1); }
 
-        stars.forEach(star => {
-            let reqTotal = 0;
-            let reqObtained = 0;
-            let optTotal = 0;
-            let optObtained = 0;
-            let oncFailed = false;
-            let preqFailed = false;
+    prevBtn.addEventListener("click", prev);
+    nextBtn.addEventListener("click", next);
 
-            criteria.forEach(c => {
-                let status = c.s[star - 1]; 
-                let val = selections[c.id]; 
-                let pts = parseInt(c.points) || 0;
+    // Auto-play léger
+    let timer = setInterval(next, 5200);
+    stage.addEventListener("mouseenter", () => clearInterval(timer));
+    stage.addEventListener("mouseleave", () => { timer = setInterval(next, 5200); });
 
-                let effectiveVal = val || 'non';
+    // Bouton copier un lien (ex : un lien de recherche Airbnb)
+    const copyBtn = document.getElementById("copyLinkBtn");
+    const copyResult = document.getElementById("copyResult");
 
-                if (effectiveVal === 'na') {
-                    if (status === 'X ONC') { oncFailed = true; }
-                    return; 
-                }
+    const airbnbSearchLink = "https://www.airbnb.com/s/St-Restitut--Dr%C3%B4me--France/homes?tab_id=home_tab&query=St%20Restitut%2C%20Dr%C3%B4me%2C%20France";
 
-                if (status === 'PRQ') {
-                    if (effectiveVal !== 'oui') preqFailed = true;
-                } else if (status === 'X' || status === 'X ONC') {
-                    reqTotal += pts;
-                    if (effectiveVal === 'oui') {
-                        reqObtained += pts;
-                    } else if (status === 'X ONC') {
-                        oncFailed = true;
-                    }
-                } else if (status === 'O') {
-                    optTotal += pts;
-                    if (effectiveVal === 'oui') {
-                        optObtained += pts;
-                    }
-                }
-            });
-
-            let isEligible = true;
-            let failReason = [];
-
-            if (preqFailed) {
-                isEligible = false;
-                failReason.push("Le prérequis (surface minimale) n'est pas rempli.");
-            }
-            if (oncFailed) {
-                isEligible = false;
-                failReason.push("Critères obligatoires non compensables (X ONC) manquants ou NA.");
-            }
-
-            let minReqPts = Math.ceil(reqTotal * 0.95);
-            let missingReq = Math.max(0, reqTotal - reqObtained);
-
-            if (reqObtained < minReqPts && reqTotal > 0) {
-                isEligible = false;
-                failReason.push(`Points obligatoires insuffisants (${reqObtained}/${reqTotal}). Vous devez atteindre au moins 95% (${minReqPts} pts).`);
-            }
-
-            let compensationNeeded = missingReq * 3;
-            let remainingOptObtained = optObtained - compensationNeeded;
-
-            if (remainingOptObtained < 0) {
-                isEligible = false;
-                failReason.push(`Points optionnels insuffisants pour compenser le déficit obligatoire (il manque ${missingReq} pts, nécessitant ${compensationNeeded} pts optionnels).`);
-            }
-
-            let reqOpt = Math.ceil(optTotal * optThresholds[star - 1]);
-            if (remainingOptObtained < reqOpt) {
-                isEligible = false;
-                failReason.push(`Points optionnels insuffisants (${Math.max(0, remainingOptObtained)} / ${reqOpt} requis après compensation).`);
-            }
-
-            const resDiv = document.createElement('div');
-            resDiv.className = `star-result ${isEligible ? 'eligible' : 'not-eligible'}`;
-            
-            let starsHtml = '';
-            for(let i=0; i<star; i++) starsHtml += '★';
-
-            let progressPct = reqTotal > 0 ? Math.min(100, (reqObtained / reqTotal) * 100) : 100;
-
-            resDiv.innerHTML = `
-                <div class="star-header">
-                    <span>${star} Étoile${star > 1 ? 's' : ''}</span>
-                    <span class="star-icon">${starsHtml}</span>
-                </div>
-                <div class="result-details">
-                    <div>Obligatoires : ${reqObtained} / ${reqTotal} (Min 95%: ${minReqPts})</div>
-                    <div class="progress-bar"><div class="progress-fill" style="width: ${progressPct}%"></div></div>
-                    <div>Optionnels : ${optObtained} / ${optTotal}</div>
-                    ${compensationNeeded > 0 ? `<div><em>Compensation appliquée : -${compensationNeeded} pts optionnels</em></div>` : ''}
-                    <div>Optionnels Requis (après comp.) : ${Math.max(0, remainingOptObtained)} / ${reqOpt} (Min ${optThresholds[star-1]*100}%)</div>
-                </div>
-                ${!isEligible ? `<div class="reason-fail">${failReason.join('<br>')}</div>` : '<div style="color: var(--success); font-weight: bold; margin-top: 0.5rem;">Éligible ! ✓</div>'}
-            `;
-            resultsContainer.appendChild(resDiv);
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', init);
-</script>
+    copyBtn.addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText(airbnbSearchLink);
+        copyResult.style.display = "block";
+        setTimeout(() => copyResult.style.display = "none", 2200);
+      }catch(e){
+        alert("Copie impossible automatiquement sur ce navigateur. Tu peux copier le lien manuellement : " + airbnbSearchLink);
+      }
+    });
+  </script>
 </body>
 </html>
