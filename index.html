@@ -233,8 +233,8 @@
       font-size: clamp(38px, 9vw, 84px); 
       font-weight: 800;
       line-height: 1.1;
-      /* DÉBUT DE LA MODIFICATION SELON LES SPÉCIFICATIONS DE L'ARCHITECTE */
-      background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://c8.alamy.com/compfr/c65725/un-mur-de-pierre-blanche-dans-un-village-de-provence-c65725.jpg');
+      /* DÉBUT DE LA MODIFICATION POUR L'IMAGE OPTIMISÉE LOCALE */
+      background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('assets/images/background-title.webp'); /* OU background-title.jpg */
       background-size: cover;
       background-repeat: no-repeat;
       background-position: center center;
@@ -784,7 +784,7 @@
     <div class="container">
       <div class="section-header">
         <h2>Randonnées & Activités</h2>
-        <p>Découvrez les paysages enchanteurs de la Drôme provençale avec des itinéraires pour tous les niveaux autour de St Restitut.</p>
+        <p>Découvrez les paysages enchantés de la Drôme provençale avec des itinéraires pour tous les niveaux autour de St Restitut.</p>
       </div>
 
       <div class="grid-2">
@@ -934,9 +934,24 @@
 
     // Crée et ajoute la miniature à la zone des miniatures
     const t = document.createElement("img");
-    t.src = src;
     t.alt = `Miniature ${i+1}`;
     t.className = "thumb" + (i === 0 ? " active" : ""); // Active la première miniature par défaut
+
+    // DÉBUT DE LA MODIFICATION POUR L'OPTIMISATION DES MINIATURES
+    try {
+      const url = new URL(src);
+      // Supprime tout paramètre im_w existant pour éviter les conflits
+      url.searchParams.delete('im_w'); 
+      // Ajoute le paramètre im_w pour une taille de 160px (suffisant pour une miniature de 72px)
+      url.searchParams.set('im_w', '160');
+      t.src = url.toString(); // Utilise l'URL optimisée pour la miniature
+    } catch (e) {
+      // En cas d'erreur de parsing d'URL, utilise l'URL originale comme fallback
+      console.error("Erreur d'optimisation d'URL pour la miniature:", src, e);
+      t.src = src;
+    }
+    // FIN DE LA MODIFICATION
+
     // Définit l'action au clic sur une miniature
     t.addEventListener("click", () => setIndex(i));
     thumbsWrap.appendChild(t);
